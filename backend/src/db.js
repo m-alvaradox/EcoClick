@@ -1,86 +1,13 @@
 // Mario Alvarado
-export const quizzes = [ // datos en memoria para arrancar
-  {
-    id: 'quiz-eco-1',
-    category: 'reciclaje',
-    title: 'Quiz de Reciclaje básico',
-    questions: [
-      { id: 101, text: '¿Dónde va una botella plástica?', options: ['Orgánico','Vidrio','Plástico'], answerIndex: 2 },
-      { id: 102, text: '¿El cartón va en…?', options: ['Papel/Cartón','Orgánico','Metales'], answerIndex: 0 }
-    ]
-  },
-  {
-    id: 'quiz-eco-2',
-    category: 'reciclaje',
-    title: 'Reciclaje avanzado',
-    questions: [
-      { id: 201, text: '¿Dónde va una lata de aluminio?', options: ['Plástico','Metales','Orgánico'], answerIndex: 1 },
-      { id: 202, text: 'El símbolo de Möbius (tres flechas) indica…', options: ['Reciclable','Biodegradable','Compostable'], answerIndex: 0 },
-      { id: 203, text: 'Con las tapas plásticas de botellas es mejor…', options: ['Separarlas y limpiar','Mantenerlas unidas','Tirar al orgánico'], answerIndex: 0 }
-    ]
-  },
-  {
-    id: 'quiz-eco-3',
-    category: 'agua',
-    title: 'Cuidado del agua',
-    questions: [
-      { id: 301, text: '¿Qué acción ahorra más agua en la ducha?', options: ['Duchas de 5–7 min','Llenar la tina','Dejar el grifo abierto'], answerIndex: 0 },
-      { id: 302, text: 'Un aireador en el grifo…', options: ['Reduce el caudal','Aumenta el consumo','No cambia nada'], answerIndex: 0 },
-      { id: 303, text: 'Riego más eficiente para plantas/jardín:', options: ['Al mediodía','Al amanecer/atardecer','De noche con aspersores potentes'], answerIndex: 1 }
-    ]
-  },
-  {
-    id: 'quiz-eco-4',
-    category: 'energia',
-    title: 'Eficiencia energética',
-    questions: [
-      { id: 401, text: '¿Qué foco consume menos energía?', options: ['Incandescente','Fluorescente','LED'], answerIndex: 2 },
-      { id: 402, text: 'El modo “standby” de los aparatos…', options: ['No consume','Consume un poco','Consume igual que encendido'], answerIndex: 1 },
-      { id: 403, text: 'Temperatura eficiente para aire acondicionado:', options: ['18°C','22–24°C','27°C'], answerIndex: 1 }
-    ]
-  },
-  {
-    id: 'quiz-eco-5',
-    category: 'biodiversidad',
-    title: 'Biodiversidad urbana',
-    questions: [
-      { id: 501, text: '¿Por qué no liberar mascotas exóticas?', options: ['Pueden volverse invasoras','Ayudan a la biodiversidad','Se adaptan sin problema'], answerIndex: 0 },
-      { id: 502, text: 'Polinizadores clave:', options: ['Abejas y mariposas','Gatos y perros','Serpientes y ranas'], answerIndex: 0 },
-      { id: 503, text: 'Plantar especies nativas…', options: ['Favorece fauna local','No aporta','Siempre consume más agua'], answerIndex: 0 }
-    ]
-  },
-  {
-    id: 'quiz-eco-6',
-    category: 'movilidad',
-    title: 'Movilidad sostenible',
-    questions: [
-      { id: 601, text: 'Menor huella por pasajero en ciudad:', options: ['Auto individual','Transporte público','Moto'], answerIndex: 1 },
-      { id: 602, text: 'Para trayectos cortos es mejor:', options: ['Caminar o bici','Taxi','Patinete a gasolina'], answerIndex: 0 },
-      { id: 603, text: 'El carpooling ayuda a reducir:', options: ['Congestión y emisiones','Tiempo de viaje siempre','Uso de transporte público'], answerIndex: 0 }
-    ]
-  },
-  {
-    id: 'quiz-eco-7',
-    category: 'residuos',
-    title: 'Gestión de residuos',
-    questions: [
-      { id: 701, text: 'Los residuos orgánicos van a:', options: ['Compost','Plástico','Vidrio'], answerIndex: 0 },
-      { id: 702, text: 'Los RAEE (electrónicos) deben ir a:', options: ['Punto limpio autorizado','Basura normal','Enterrarlos'], answerIndex: 0 },
-      { id: 703, text: 'Comprar a granel ayuda a reducir:', options: ['Envases','Calidad','Precio siempre'], answerIndex: 0 }
-    ]
-  }
-];
-
-export const answers = []; //respuestas de juego (sesiones)
-
-export const ecoFeedback = [
-  { topic: 'reciclaje', message: 'Separa plástico, papel/cartón, vidrio y orgánicos para mejorar la tasa de recuperación.' },
-  { topic: 'agua',       message: 'Cierra el grifo al cepillarte y repara fugas para ahorrar litros por día.' }
-];
 import fs from 'fs';
 import path from 'path';
 
+export const answers = []; //respuestas de juego (sesiones)
+
 const dataDir = path.join(process.cwd(), 'data');
+
+export const quizzes = readJson('quizzes.json');
+export const ecoFeedback = readJson('ecoFeedback.json')
 
 function ensureDataDir() {
   if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir);
