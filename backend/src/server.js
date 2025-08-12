@@ -9,13 +9,16 @@ import { fileURLToPath } from 'url';
 import usersRoutes from './users.js';
 import achievementsRoutes from './achievements.js';
 import progressRoutes from './progress.js';
+import resultsRouter from './results.js'; 
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+app.set('json spaces', 2);
 app.use(cors());
 app.use(express.json());
+app.use('/', resultsRouter);
 app.use(morgan('dev'));
 
 app.use('/api/users', usersRoutes);
@@ -26,6 +29,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 app.use('/quizzes', quizzesRouter); // /quizzes y /quizzes/:id
 app.use('/', gameplayRouter);       // /games/:gameId/answers y /feedback
+
 
 // Endpoint de prueba
 app.get('/health', (req, res) => {
