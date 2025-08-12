@@ -1,6 +1,15 @@
-[
-  {
-    "userId": 1,
-    "achievementId": 1
-  }
-]
+{
+  "answers": [],
+  "categoryResults": [
+    {
+      "userId": 1,
+      "category": "reciclaje",
+      "score": 85
+    },
+    {
+      "userId": 2,
+      "category": "agua",
+      "score": 20
+    }
+  ]
+}
