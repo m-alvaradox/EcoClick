@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'api.dart';
+import 'ui/theme.dart';
 
 void main() {
   runApp(const EcoClickApp());
@@ -12,7 +13,9 @@ class EcoClickApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'EcoClick',
-      theme: ThemeData(colorSchemeSeed: Colors.green, useMaterial3: true),
+      theme: AppTheme.light(),
+      darkTheme: AppTheme.dark(),
+      themeMode: ThemeMode.system,
       home: const QuizListPage(),
     );
   }
@@ -119,8 +122,9 @@ class _QuizDetailPageState extends State<QuizDetailPage> {
     try {
       final item = await EcoClickAPI.getQuiz(widget.quizId);
       setState(() => quiz = item);
-      timer.reset();
-      timer.start();
+      timer
+        ..reset()
+        ..start();
     } catch (e) {
       setState(() => error = e.toString());
     }
@@ -133,11 +137,9 @@ class _QuizDetailPageState extends State<QuizDetailPage> {
     int correct = 0;
     for (final q in qs) {
       final id = q['id'] as int;
-      final correctIndex =
-          q['answerIndex'] as int?; // viene en el JSON del backend
+      final correctIndex = q['answerIndex'] as int?;
       if (correctIndex != null && chosen[id] == correctIndex) correct++;
     }
-    // Score simple en porcentaje
     return qs.isEmpty ? 0 : ((correct * 100) / qs.length).round();
   }
 
@@ -159,16 +161,16 @@ class _QuizDetailPageState extends State<QuizDetailPage> {
 
       await EcoClickAPI.postAnswers(
         quizId: quiz!['id'],
-        userId: 1, // TODO: si luego agregan auth, reemplazar
+        userId: 1,
         answers: answersList,
         score: score,
         timeSec: timeSec,
       );
 
       final fb = await EcoClickAPI.getFeedback(topic: quiz!['category']);
-      final msg = (fb.isNotEmpty
+      final msg = fb.isNotEmpty
           ? (fb.first['message'] ?? '')
-          : '¡Gracias por participar!');
+          : '¡Gracias por participar!';
 
       if (!mounted) return;
       showDialog(
@@ -207,7 +209,6 @@ class _QuizDetailPageState extends State<QuizDetailPage> {
 
     final questions = (quiz!['questions'] as List<dynamic>)
         .cast<Map<String, dynamic>>();
-
     return Scaffold(
       appBar: AppBar(title: Text(quiz!['title'] ?? 'Quiz')),
       body: ListView(
