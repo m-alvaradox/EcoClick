@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 
 import usersRoutes from './users.js';
 import achievementsRoutes from './achievements.js';
+import userAchievementsRoutes from './userAchievements.js';
 import progressRoutes from './progress.js';
 import resultsRouter from './results.js'; 
 
@@ -18,17 +19,21 @@ const app = express();
 app.set('json spaces', 2);
 app.use(cors());
 app.use(express.json());
-app.use('/', resultsRouter);
 app.use(morgan('dev'));
+
+// Rutas de tu aplicación (sin /api)
+app.use('/', resultsRouter);
 
 app.use('/api/users', usersRoutes);
 app.use('/api/achievements', achievementsRoutes);
+app.use('/api/userAchievements', userAchievementsRoutes);
 app.use('/api/progress', progressRoutes);
+app.use('/api/quizzes', quizzesRouter);
+app.use('/api/games', gameplayRouter);
+
 
 app.use(express.static(path.join(__dirname, '../public')));
 
-app.use('/quizzes', quizzesRouter); // /quizzes y /quizzes/:id
-app.use('/', gameplayRouter);       // /games/:gameId/answers y /feedback
 
 
 // Endpoint de prueba
@@ -40,6 +45,7 @@ app.get('/', (req, res) => {
   res.json({ ok: true, service: 'EcoClick API funcionando' });
 });
 
+// Manejo de rutas no encontradas
 app.use((req, res) => {
   res.status(404).json({ error: 'Ruta no encontrada' });
 });

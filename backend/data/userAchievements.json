@@ -1,15 +1,18 @@
 [
   {
     "userId": 1,
-    "achievementId": 1
+    "achievementId": 1,
+    "date": "2025-08-17T15:30:00.000Z"
   },
   {
     "userId": 1,
-    "achievementId": 2
+    "achievementId": 2,
+    "date": "2025-08-18T10:15:00.000Z"
   },
   {
     "userId": 2,
-    "achievementId": 1
+    "achievementId": 1,
+    "date": "2025-08-17T16:45:00.000Z"
   },
   {
     "userId": 2,

@@ -1,27 +1,23 @@
-import express from 'express';
+import { Router } from 'express';
 import { leerAchievements, guardarAchievements } from './db.js';
+const router = Router();
 
-const router = express.Router();
-
-router.get('/', (req, res) => {
-  const achievements = leerAchievements();
-  res.json(achievements);
+router.get('/', (_req, res) => {
+  res.json(leerAchievements()); // array llano
 });
 
 router.post('/', (req, res) => {
-  const { name, description, points } = req.body;
+  const { name, description, points } = req.body || {};
   if (!name || !description || typeof points !== 'number') {
     return res.status(400).json({ error: 'Faltan datos o formato incorrecto' });
   }
-
-  const achievements = leerAchievements();
-  const newId = achievements.length > 0 ? Math.max(...achievements.map(a => a.id)) + 1 : 1;
-
-  const newAchievement = { id: newId, name, description, points };
-  achievements.push(newAchievement);
-  guardarAchievements(achievements);
-
-  res.status(201).json(newAchievement);
+  const list = leerAchievements();
+  const newId = list.length ? Math.max(...list.map(a => a.id)) + 1 : 1;
+  const item = { id: newId, name, description, points };
+  list.push(item);
+  guardarAchievements(list);
+  res.status(201).json(item);
 });
 
 export default router;
+
