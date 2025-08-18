@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class EcoClickAPI {
-  // Si en Windows te falla "localhost", usa 127.0.0.1
+  // Ajusta si usas otro puerto/host
   static const String baseUrl = 'http://127.0.0.1:4000';
 
   static Future<List<dynamic>> getQuizzes() async {
@@ -21,6 +21,7 @@ class EcoClickAPI {
     return (data['item'] as Map<String, dynamic>);
   }
 
+  // NEW: enviar respuestas del juego
   static Future<Map<String, dynamic>> postAnswers({
     required String quizId,
     required int userId,
@@ -43,8 +44,9 @@ class EcoClickAPI {
     return jsonDecode(res.body) as Map<String, dynamic>;
   }
 
+  // NEW: obtener feedback ecológico
   static Future<List<dynamic>> getFeedback({String? topic}) async {
-    final url = topic == null || topic.isEmpty
+    final url = (topic == null || topic.isEmpty)
         ? '$baseUrl/feedback'
         : '$baseUrl/feedback?topic=$topic';
     final res = await http.get(Uri.parse(url));
