@@ -2,5 +2,6 @@
     "files.associations": {
         "*.dbclient-js": "javascript",
         "plyconfig.json": "jsonc"
-    }
+    },
+    "cmake.sourceDirectory": "C:/Users/Andrews_22/Documents/GitHub/EcoClick/frontend/windows/flutter"
 }

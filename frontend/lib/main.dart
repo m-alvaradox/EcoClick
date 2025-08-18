@@ -144,55 +144,67 @@ class _QuizDetailPageState extends State<QuizDetailPage> {
   }
 
   Future<void> _submit() async {
-    if (quiz == null) return;
-    setState(() {
-      submitting = true;
-      error = null;
-    });
-    timer.stop();
+  if (quiz == null) return;
+  setState(() {
+    submitting = true;
+    error = null;
+  });
+  timer.stop();
 
-    final answersList = chosen.entries
-        .map((e) => {'questionId': e.key, 'chosenIndex': e.value})
-        .toList();
+  final answersList = chosen.entries
+      .map((e) => {'questionId': e.key, 'chosenIndex': e.value})
+      .toList();
 
-    try {
-      final score = _calcScore();
-      final timeSec = (timer.elapsedMilliseconds / 1000).round();
+  try {
+    final score = _calcScore();
+    final timeSec = (timer.elapsedMilliseconds / 1000).round();
 
-      await EcoClickAPI.postAnswers(
-        quizId: quiz!['id'],
-        userId: 1,
-        answers: answersList,
-        score: score,
-        timeSec: timeSec,
+    // 1) Enviar respuestas del quiz (flujo existente)
+    await EcoClickAPI.postAnswers(
+      quizId: quiz!['id'],
+      userId: 1,
+      answers: answersList,
+      score: score,
+      timeSec: timeSec,
+    );
+
+    // 2) NUEVO: guardar resultado por categoría
+    await EcoClickAPI.postCategoryResult(
+      userId: 1,
+      category: quiz!['category'] as String, // ej: 'reciclaje'
+      score: score,
+    );
+
+    // 3) SnackBar de confirmación del issue
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Resultado guardado')),
       );
-
-      final fb = await EcoClickAPI.getFeedback(topic: quiz!['category']);
-      final msg = fb.isNotEmpty
-          ? (fb.first['message'] ?? '')
-          : '¡Gracias por participar!';
-
-      if (!mounted) return;
-      showDialog(
-        context: context,
-        builder: (_) {
-          return AlertDialog(
-            title: const Text('¡Respuestas enviadas!'),
-            content: Text('Puntaje: $score%\nConsejo: $msg'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
-    } catch (e) {
-      setState(() => error = e.toString());
-    } finally {
-      if (mounted) setState(() => submitting = false);
     }
+
+    // 4) (opcional) feedback como ya lo hacías
+    final fb = await EcoClickAPI.getFeedback(topic: quiz!['category']);
+    final msg = fb.isNotEmpty ? (fb.first['message'] ?? '') : '¡Gracias por participar!';
+
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('¡Respuestas enviadas!'),
+        content: Text('Puntaje: $score%\nConsejo: $msg'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  } catch (e) {
+    setState(() => error = e.toString());
+  } finally {
+    if (mounted) setState(() => submitting = false);
+  }
   }
 
   @override

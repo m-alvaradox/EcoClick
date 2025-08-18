@@ -53,4 +53,26 @@ class EcoClickAPI {
     final data = jsonDecode(res.body) as Map<String, dynamic>;
     return (data['items'] as List<dynamic>);
   }
+
+/// guardar resultado por categoría -- Andrés Layedra
+  static Future<void> postCategoryResult({
+    required int userId,
+    required String category,
+    required int score,
+  }) async {
+    final res = await http.post(
+      Uri.parse('$baseUrl/results/category'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'userId': userId,
+        'category': category,
+        'score': score,
+      }),
+    );
+
+    // Consideramos éxito 200 o 201. Ignoramos body (id, createdAt, etc.)
+    if (res.statusCode != 200 && res.statusCode != 201) {
+      throw Exception('Error ${res.statusCode}: ${res.body}');
+    }
+  }
 }

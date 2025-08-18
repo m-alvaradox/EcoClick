@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../api.dart';
+
 
 /// Espaciados consistentes
 class Gaps {
@@ -150,3 +152,79 @@ void showErrSnack(BuildContext ctx, String msg) {
     ),
   );
 }
+
+// ------------------------------
+// Botón para enviar quiz + guardar resultado por categoría
+// ------------------------------
+class SubmitQuizButton extends StatefulWidget {
+  const SubmitQuizButton({
+    super.key,
+    required this.quizId,
+    required this.userId,
+    required this.category,
+    required this.answers,
+    required this.score,
+    required this.timeSec,
+    this.onSuccess, // opcional: callback cuando todo sale bien
+  });
+
+  final String quizId;
+  final int userId;
+  final String category;
+  final List<Map<String, dynamic>> answers;
+  final int score;
+  final int timeSec;
+  final VoidCallback? onSuccess;
+
+  @override
+  State<SubmitQuizButton> createState() => _SubmitQuizButtonState();
+}
+
+class _SubmitQuizButtonState extends State<SubmitQuizButton> {
+  bool _loading = false;
+
+  Future<void> _handleSubmit() async {
+    if (_loading) return;
+    setState(() => _loading = true);
+
+    try {
+      // 1) Enviar respuestas del quiz (flujo existente)
+      await EcoClickAPI.postAnswers(
+        quizId: widget.quizId,
+        userId: widget.userId,
+        answers: widget.answers,
+        score: widget.score,
+        timeSec: widget.timeSec,
+      );
+
+      // 2) Guardar el resultado por categoría (NUEVO)
+      await EcoClickAPI.postCategoryResult(
+        userId: widget.userId,
+        category: widget.category,
+        score: widget.score,
+      );
+
+      if (!mounted) return;
+      showOkSnack(context, 'Resultado guardado');
+      widget.onSuccess?.call();
+    } catch (e) {
+      if (!mounted) return;
+      showErrSnack(context, 'No se pudo guardar: $e');
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FilledButton.icon(
+      onPressed: _loading ? null : _handleSubmit,
+      icon: _loading
+          ? const SizedBox(
+              width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+          : const Icon(Icons.send),
+      label: Text(_loading ? 'Enviando…' : 'Enviar quiz'),
+    );
+  }
+}
+
