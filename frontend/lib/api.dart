@@ -75,4 +75,18 @@ class EcoClickAPI {
       throw Exception('Error ${res.statusCode}: ${res.body}');
     }
   }
+    
+  /// Estadísticas de respuestas por usuario:
+
+  static Future<Map<String, dynamic>> getUserStatsResponses({required int userId}) async {
+    final url = '$baseUrl/stats/responses?userId=$userId';
+    final res = await http.get(Uri.parse(url));
+
+    if (res.statusCode >= 400) {
+      throw Exception('Error ${res.statusCode}: ${res.body}');
+    }
+    final data = jsonDecode(res.body) as Map<String, dynamic>;
+    return data;
+  }
+
 }

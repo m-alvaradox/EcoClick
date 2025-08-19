@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'api.dart';
 import 'ui/theme.dart';
+import 'screens/stats/stats_page.dart';
+
 
 void main() {
   runApp(const EcoClickApp());
@@ -41,8 +43,24 @@ class _QuizListPageState extends State<QuizListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Quizzes EcoClick')),
-      body: FutureBuilder<List<dynamic>>(
+    appBar: AppBar(
+      title: const Text('Quizzes EcoClick'),
+      actions: [
+        IconButton(
+          tooltip: 'Estadísticas',
+          icon: const Icon(Icons.insights),
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => const UserStatsPage(userId: 1), 
+              ),
+            );
+          },
+        ),
+      ],
+    ),
+
+    body: FutureBuilder<List<dynamic>>(
         future: future,
         builder: (context, snap) {
           if (snap.connectionState != ConnectionState.done) {

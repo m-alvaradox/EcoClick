@@ -35,6 +35,36 @@
       "userId": 1,
       "category": "reciclaje",
       "score": 100
+    },
+    {
+      "userId": 1,
+      "category": "movilidad",
+      "score": 33
+    },
+    {
+      "userId": 1,
+      "category": "movilidad",
+      "score": 67
+    },
+    {
+      "userId": 1,
+      "category": "movilidad",
+      "score": 100
+    },
+    {
+      "userId": 1,
+      "category": "movilidad",
+      "score": 100
+    },
+    {
+      "userId": 1,
+      "category": "movilidad",
+      "score": 100
+    },
+    {
+      "userId": 1,
+      "category": "movilidad",
+      "score": 100
     }
   ]
 }
