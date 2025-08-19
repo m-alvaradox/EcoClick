@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
 import '../api.dart';
 
 
@@ -228,3 +229,140 @@ class _SubmitQuizButtonState extends State<SubmitQuizButton> {
   }
 }
 
+
+
+class CategoryBarChart extends StatelessWidget {
+  const CategoryBarChart({
+    super.key,
+    required this.categories, // List<Map>: [{category, avgScore, attempts}, ...]
+    this.height = 260,
+  });
+
+  final List<Map<String, dynamic>> categories;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    if (categories.isEmpty) {
+      return const Text('Sin datos para graficar.');
+    }
+
+    // Extrae labels y valores
+    final labels = <String>[];
+    final rawValues = <double>[];
+    for (final m in categories) {
+      labels.add('${(m['category'] ?? '').toString()}');
+      final v = (m['avgScore'] ?? 0);
+      rawValues.add(v is num ? v.toDouble() : double.tryParse('$v') ?? 0);
+    }
+
+    // Normaliza si vienen como 0..1 → multiplica a %
+    final maxRaw = rawValues.fold<double>(0, (p, c) => c > p ? c : p);
+    final values = maxRaw <= 1.0
+        ? rawValues.map((e) => e * 100).toList()
+        : rawValues;
+
+    // maxY redondeado hacia arriba al múltiplo de 10 más cercano (mínimo 100)
+    double maxY = values.fold<double>(0, (p, c) => c > p ? c : p);
+    maxY = maxY < 100 ? 100 : (maxY / 10).ceil() * 10;
+    final interval = (maxY / 5).clamp(10, 50);
+
+    String _short(String s, int max) =>
+        s.length <= max ? s : s.substring(0, max - 1) + '…';
+
+    return LayoutBuilder(
+      builder: (context, c) {
+        final veryTight = c.maxWidth < 330;
+        final tight = c.maxWidth < 380;
+        final barWidth = veryTight ? 10.0 : (tight ? 14.0 : 18.0);
+        final textStyle = Theme.of(context).textTheme.bodySmall;
+
+        final barColor = Theme.of(context).colorScheme.primary;
+
+        return SizedBox(
+          height: height,
+          child: BarChart(
+            BarChartData(
+              minY: 0,
+              maxY: maxY,
+              groupsSpace: 12,
+              alignment: BarChartAlignment.spaceAround,
+              barTouchData: BarTouchData(
+                enabled: true,
+                touchTooltipData: BarTouchTooltipData(
+                  tooltipBgColor: Colors.black87,
+                  getTooltipItem: (group, gi, rod, ri) => BarTooltipItem(
+                    '${labels[gi]}\n${rod.toY.toStringAsFixed(1)}%',
+                    const TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+              titlesData: FlTitlesData(
+                topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                leftTitles: AxisTitles(
+                  axisNameWidget: Text('%', style: textStyle),
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    reservedSize: 36,
+                    interval: interval.toDouble(),
+                    getTitlesWidget: (value, meta) => Text(
+                      '${value.toInt()}',
+                      style: textStyle,
+                    ),
+                  ),
+                ),
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: (value, meta) {
+                      final i = value.toInt();
+                      if (i < 0 || i >= labels.length) {
+                        return const SizedBox.shrink();
+                      }
+                      final label = veryTight
+                          ? _short(labels[i], 6)
+                          : (tight ? _short(labels[i], 10) : labels[i]);
+                      return SideTitleWidget(
+                        axisSide: meta.axisSide,
+                        space: 8,
+                        child: Transform.rotate(
+                          angle: tight ? -0.6 : 0, // ~-34° en pantallas estrechas
+                          child: Text(label, style: textStyle, textAlign: TextAlign.center),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              gridData: FlGridData(
+                show: true,
+                drawVerticalLine: false,
+                horizontalInterval: interval.toDouble(),
+              ),
+              borderData: FlBorderData(
+                show: true,
+                border: Border.all(
+                  color: Theme.of(context).dividerColor,
+                ),
+              ),
+              barGroups: List.generate(values.length, (i) {
+                return BarChartGroupData(
+                  x: i,
+                  barRods: [
+                    BarChartRodData(
+                      toY: values[i],
+                      width: barWidth,
+                      color: barColor,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ],
+                );
+              }),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../ui/widgets.dart';
 import '../../api.dart';
 
 class UserStatsPage extends StatefulWidget {
@@ -79,14 +80,28 @@ class _UserStatsPageState extends State<UserStatsPage> {
             child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                _SummaryCards(
-                  totalSessions: totalSessions,
-                  totalAnswers: totalAnswers,
-                  avgScore: avgScore,
+              _SummaryCards(
+                totalSessions: totalSessions,
+                totalAnswers: totalAnswers,
+                avgScore: avgScore,
+              ),
+              const SizedBox(height: 16),
+
+              Text('Gráfico (promedio % por categoría)',
+                  style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: 8),
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: CategoryBarChart(
+                    categories: categories.cast<Map<String, dynamic>>(),
+                    height: 260, // puedes ajustar
+                  ),
                 ),
-                const SizedBox(height: 16),
-                Text('Por categoría',
-                    style: Theme.of(context).textTheme.titleMedium),
+              ),
+
+const SizedBox(height: 16),
+Text('Por categoría', style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 8),
                 if (categories.isEmpty)
                   const Text('Sin datos por categoría.')
