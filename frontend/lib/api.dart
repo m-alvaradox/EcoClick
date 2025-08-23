@@ -1,76 +1,26 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'config.dart';
 
 class EcoClickAPI {
-  // USERS
-  static Future<List<dynamic>> getUsers() async {
-    final r = await http.get(Uri.parse('$baseUrl/users'));
-    if (r.statusCode >= 400)
-      throw Exception('Error ${r.statusCode}: ${r.body}');
-    return jsonDecode(r.body) as List<dynamic>;
-  }
+  // Si en Windows te falla "localhost", usa 127.0.0.1
+  static const String baseUrl = 'http://127.0.0.1:4000';
 
-  // ACHIEVEMENTS (catálogo maestro)
-  static Future<List<dynamic>> getAllAchievements() async {
-    final r = await http.get(Uri.parse('$baseUrl/achievements'));
-    if (r.statusCode >= 400)
-      throw Exception('Error ${r.statusCode}: ${r.body}');
-    return jsonDecode(r.body) as List<dynamic>;
-  }
-
-  // USER ACHIEVEMENTS
-  static Future<List<Map<String, dynamic>>> getUserAchievements(
-    int userId,
-  ) async {
-    final r = await http.get(
-      Uri.parse('$baseUrl/userAchievements?userId=$userId'),
-    );
-    if (r.statusCode >= 400)
-      throw Exception('Error ${r.statusCode}: ${r.body}');
-    final items = (jsonDecode(r.body)['items'] as List<dynamic>);
-    return items.map((e) => Map<String, dynamic>.from(e as Map)).toList();
-  }
-
-  // PROGRESS -> registra un logro para un user
-  static Future<Map<String, dynamic>> postProgress({
-    required int userId,
-    required int achievementId,
-    required String date,
-  }) async {
-    final r = await http.post(
-      Uri.parse('$baseUrl/progress'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'userId': userId,
-        'achievementId': achievementId,
-        'date': date,
-      }),
-    );
-    if (r.statusCode == 409) {
-      throw Exception('409: Progreso ya registrado');
-    }
-    if (r.statusCode >= 400)
-      throw Exception('Error ${r.statusCode}: ${r.body}');
-    return jsonDecode(r.body) as Map<String, dynamic>;
-  }
-
-  // QUIZZES
   static Future<List<dynamic>> getQuizzes() async {
-    final r = await http.get(Uri.parse('$baseUrl/quizzes'));
-    if (r.statusCode >= 400)
-      throw Exception('Error ${r.statusCode}: ${r.body}');
-    return jsonDecode(r.body) as List<dynamic>;
+    final res = await http.get(Uri.parse('$baseUrl/quizzes'));
+    if (res.statusCode >= 400)
+      throw Exception('Error ${res.statusCode}: ${res.body}');
+    final data = jsonDecode(res.body) as Map<String, dynamic>;
+    return (data['items'] as List<dynamic>);
   }
 
   static Future<Map<String, dynamic>> getQuiz(String id) async {
-    final r = await http.get(Uri.parse('$baseUrl/quizzes/$id'));
-    if (r.statusCode >= 400)
-      throw Exception('Error ${r.statusCode}: ${r.body}');
-    return (jsonDecode(r.body)['item'] as Map<String, dynamic>);
+    final res = await http.get(Uri.parse('$baseUrl/quizzes/$id'));
+    if (res.statusCode >= 400)
+      throw Exception('Error ${res.statusCode}: ${res.body}');
+    final data = jsonDecode(res.body) as Map<String, dynamic>;
+    return (data['item'] as Map<String, dynamic>);
   }
 
-  // NEW: enviar respuestas del juego
   static Future<Map<String, dynamic>> postAnswers({
     required String quizId,
     required int userId,
@@ -78,7 +28,7 @@ class EcoClickAPI {
     required int score,
     required int timeSec,
   }) async {
-    final r = await http.post(
+    final res = await http.post(
       Uri.parse('$baseUrl/games/$quizId/answers'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
@@ -88,19 +38,55 @@ class EcoClickAPI {
         'timeSec': timeSec,
       }),
     );
-    if (r.statusCode >= 400)
-      throw Exception('Error ${r.statusCode}: ${r.body}');
-    return jsonDecode(r.body) as Map<String, dynamic>;
+    if (res.statusCode >= 400)
+      throw Exception('Error ${res.statusCode}: ${res.body}');
+    return jsonDecode(res.body) as Map<String, dynamic>;
   }
 
-  // NEW: obtener feedback ecológico
   static Future<List<dynamic>> getFeedback({String? topic}) async {
-    final url = (topic == null || topic.isEmpty)
+    final url = topic == null || topic.isEmpty
         ? '$baseUrl/feedback'
         : '$baseUrl/feedback?topic=$topic';
-    final r = await http.get(Uri.parse(url));
-    if (r.statusCode >= 400)
-      throw Exception('Error ${r.statusCode}: ${r.body}');
-    return (jsonDecode(r.body)['items'] as List<dynamic>);
+    final res = await http.get(Uri.parse(url));
+    if (res.statusCode >= 400)
+      throw Exception('Error ${res.statusCode}: ${res.body}');
+    final data = jsonDecode(res.body) as Map<String, dynamic>;
+    return (data['items'] as List<dynamic>);
   }
+
+/// guardar resultado por categoría -- Andrés Layedra
+  static Future<void> postCategoryResult({
+    required int userId,
+    required String category,
+    required int score,
+  }) async {
+    final res = await http.post(
+      Uri.parse('$baseUrl/results/category'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'userId': userId,
+        'category': category,
+        'score': score,
+      }),
+    );
+
+    // Consideramos éxito 200 o 201. Ignoramos body (id, createdAt, etc.)
+    if (res.statusCode != 200 && res.statusCode != 201) {
+      throw Exception('Error ${res.statusCode}: ${res.body}');
+    }
+  }
+    
+  /// Estadísticas de respuestas por usuario:
+
+  static Future<Map<String, dynamic>> getUserStatsResponses({required int userId}) async {
+    final url = '$baseUrl/stats/responses?userId=$userId';
+    final res = await http.get(Uri.parse(url));
+
+    if (res.statusCode >= 400) {
+      throw Exception('Error ${res.statusCode}: ${res.body}');
+    }
+    final data = jsonDecode(res.body) as Map<String, dynamic>;
+    return data;
+  }
+
 }

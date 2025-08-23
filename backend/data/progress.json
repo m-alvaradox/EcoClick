@@ -1,24 +1,75 @@
-[
-  {
-    "userId": 1,
-    "achievementId": 1
-  },
-  {
-    "userId": 1,
-    "achievementId": 2
-  },
-  {
-    "userId": 2,
-    "achievementId": 1
-  },
-  {
-    "userId": 2,
-    "achievementId": 2,
-    "date": "2025-08-17T10:45:27.115"
-  },
-  {
-    "userId": 1,
-    "achievementId": 3,
-    "date": "2025-08-17T10:45:37.331"
-  }
-]
+{
+  "answers": [],
+  "categoryResults": [
+    {
+      "userId": 1,
+      "category": "reciclaje",
+      "score": 85
+    },
+    {
+      "userId": 2,
+      "category": "agua",
+      "score": 20
+    },
+    {
+      "userId": 1,
+      "category": "reciclaje",
+      "score": 0
+    },
+    {
+      "userId": 1,
+      "category": "reciclaje",
+      "score": 0
+    },
+    {
+      "userId": 1,
+      "category": "reciclaje",
+      "score": 0
+    },
+    {
+      "userId": 1,
+      "category": "reciclaje",
+      "score": 0
+    },
+    {
+      "userId": 1,
+      "category": "reciclaje",
+      "score": 100
+    },
+    {
+      "userId": 1,
+      "category": "movilidad",
+      "score": 33
+    },
+    {
+      "userId": 1,
+      "category": "movilidad",
+      "score": 67
+    },
+    {
+      "userId": 1,
+      "category": "movilidad",
+      "score": 100
+    },
+    {
+      "userId": 1,
+      "category": "movilidad",
+      "score": 100
+    },
+    {
+      "userId": 1,
+      "category": "movilidad",
+      "score": 100
+    },
+    {
+      "userId": 1,
+      "category": "movilidad",
+      "score": 100
+    },
+    {
+      "userId": 1,
+      "category": "reciclaje",
+      "score": 100
+    }
+  ]
+}

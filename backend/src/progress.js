@@ -1,64 +1,70 @@
 import express from 'express';
-import { leerProgress, guardarProgress, leerAchievements, leerUsers, leerUserAchievements, guardarUserAchievements } from './db.js';
+import { leerUsers, leerAchievements, leerProgress, guardarProgress } from './db.js';
 
 const router = express.Router();
 
-// GET /progress?userId=1
 router.get('/', (req, res) => {
-  const userId = parseInt(req.query.userId);
-  const progress = Array.isArray(leerProgress()) ? leerProgress() : []; // asegurar arreglo
-  const achievements = Array.isArray(leerAchievements()) ? leerAchievements() : [];
+  const userId = Number(req.query.userId);
 
-  let items;
+  const users = leerUsers();
+  const achievements = leerAchievements();
+  const progress = leerProgress();
+
   if (userId) {
-    items = progress
-      .filter(p => p.userId === userId)
-      .map(p => {
-        const a = achievements.find(a => a.id === p.achievementId);
-        return a ? { id: a.id, name: a.name, icon: a.icon, date: p.date } : null;
-      })
-      .filter(a => a);
-  } else {
-    items = progress
-      .map(p => {
-        const a = achievements.find(a => a.id === p.achievementId);
-        return a ? { id: a.id, name: a.name, icon: a.icon, date: p.date } : null;
-      })
-      .filter(a => a);
-  }
+    const user = users.find(u => u.id === userId);
+    if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
 
-  res.json({ items });
+    const userAchievements = progress
+      .filter(p => p.userId === userId)
+      .map(p => achievements.find(a => a.id === p.achievementId))
+      .filter(a => a !== undefined);
+
+    return res.json({
+      user: user.name,
+      achievements: userAchievements,
+    });
+  } else {
+    // Opcional: devolver todo el progreso
+    const allData = users.map(user => ({
+      user: user.name,
+      achievements: progress
+        .filter(p => p.userId === user.id)
+        .map(p => achievements.find(a => a.id === p.achievementId))
+        .filter(a => a !== undefined),
+    }));
+    return res.json(allData);
+  }
 });
 
-// POST /progress
 router.post('/', (req, res) => {
-  const { userId, achievementId, date } = req.body;
-  if (!userId || !achievementId) return res.status(400).json({ error: 'Faltan datos' });
+  const { userId, achievementId } = req.body;
 
-  const users = Array.isArray(leerUsers()) ? leerUsers() : [];
-  const achievements = Array.isArray(leerAchievements()) ? leerAchievements() : [];
-  const progress = Array.isArray(leerProgress()) ? leerProgress() : [];
-  const userAchievements = Array.isArray(leerUserAchievements()) ? leerUserAchievements() : [];
+  if (!userId || !achievementId) {
+    return res.status(400).json({ ok: false, error: 'Faltan userId o achievementId' });
+  }
 
-  if (!users.find(u => u.id === userId)) return res.status(404).json({ error: 'Usuario no encontrado' });
-  if (!achievements.find(a => a.id === achievementId)) return res.status(404).json({ error: 'Logro no encontrado' });
-  if (progress.some(p => p.userId === userId && p.achievementId === achievementId))
-    return res.status(409).json({ error: 'Progreso ya registrado' });
+  const users = leerUsers();
+  const achievements = leerAchievements();
+  const progress = leerProgress();
 
-  const now = date || new Date().toISOString();
+  if (!users.find(u => u.id === userId)) {
+    return res.status(404).json({ ok: false, error: 'Usuario no encontrado' });
+  }
 
-  // Guardar en progress.json
-  const newProgress = { userId, achievementId, date: now };
+  if (!achievements.find(a => a.id === achievementId)) {
+    return res.status(404).json({ ok: false, error: 'Logro no encontrado' });
+  }
+
+  const exists = progress.some(p => p.userId === userId && p.achievementId === achievementId);
+  if (exists) {
+    return res.status(409).json({ ok: false, error: 'Progreso ya registrado' });
+  }
+
+  const newProgress = { userId, achievementId };
   progress.push(newProgress);
   guardarProgress(progress);
 
-  // Guardar en userAchievements.json
-  if (!userAchievements.some(p => p.userId === userId && p.achievementId === achievementId)) {
-    userAchievements.push({ userId, achievementId, date: now });
-    guardarUserAchievements(userAchievements);
-  }
-
-  res.status(201).json({ item: newProgress });
+  return res.status(201).json({ ok: true, item: newProgress });
 });
 
 export default router;

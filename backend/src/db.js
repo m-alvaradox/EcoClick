@@ -1,32 +1,72 @@
-import { readJson, writeJson } from './utils.js';
+// Mario Alvarado
+import fs from 'fs';
+import path from 'path';
 
 export const answers = []; //respuestas de juego (sesiones)
 
-// Users
-export const leerUsers = () => readJson('users.json');
-export const guardarUsers = (data) => writeJson('users.json', data);
+const dataDir = path.join(process.cwd(), 'data');
 
-// Quizzes
-export const leerQuizzes = () => readJson('quizzes.json');
-export const guardarQuizzes = (data) => writeJson('quizzes.json', data);
+export const quizzes = readJson('quizzes.json');
+export const ecoFeedback = readJson('ecoFeedback.json')
 
-// EcoFeedback
-export const ecoFeedback = () => readJson('ecoFeedback.json');
-export const guardarEcoFeedback = (data) => writeJson('ecoFeedback.json', data);
+function ensureDataDir() {
+  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir);
+}
 
-// Achievements
-export const leerAchievements = () => readJson('achievements.json');
-export const guardarAchievements = (data) => writeJson('achievements.json', data);
+// Función genérica para leer JSON
+function readJson(fileName) {
+  ensureDataDir();
+  const filePath = path.join(dataDir, fileName);
+  if (!fs.existsSync(filePath)) return [];
+  try {
+    const data = fs.readFileSync(filePath, 'utf-8');
+    return JSON.parse(data);
+  } catch (e) {
+    console.error(`Error leyendo ${fileName}:`, e);
+    return [];
+  }
+}
 
-// UserAchievements
-export const leerUserAchievements = () => readJson('userAchievements.json');
-export const guardarUserAchievements = (data) => writeJson('userAchievements.json', data);
+// Función genérica para guardar JSON
+function writeJson(fileName, data) {
+  ensureDataDir();
+  const filePath = path.join(dataDir, fileName);
+  try {
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+  } catch (e) {
+    console.error(`Error escribiendo ${fileName}:`, e);
+  }
+}
 
-// Progress
-export const leerProgress = () => readJson('progress.json');  
-export const guardarProgress = (data) => writeJson('progress.json', data);
+// Usuarios
+export function leerUsers() {
+  return readJson('users.json');
+}
+export function guardarUsers(users) {
+  writeJson('users.json', users);
+}
+
+// Logros
+export function leerAchievements() {
+  return readJson('achievements.json');
+}
+export function guardarAchievements(achievements) {
+  writeJson('achievements.json', achievements);
+}
+
+// Progreso
+export function leerProgress() {
+  return readJson('progress.json');
+}
+export function guardarProgress(progress) {
+  writeJson('progress.json', progress);
+}
 
 
+
+// Andrés Layedra
+
+// --- Helpers para resultados por categoría y estadísticas ---
 
 function _readSafeProgress() {
   const p = leerProgress() || {};

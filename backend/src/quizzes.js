@@ -1,20 +1,21 @@
-import express from 'express';
-import { leerQuizzes, guardarQuizzes } from './db.js';
+// Visualización de quizzes (Mario Alvarado)
+import { Router } from 'express';
+import { quizzes } from './db.js';
 
-const router = express.Router();
+const r = Router();
 
-// GET todos los quizzes
-router.get('/', async (req, res) => {
-  const quizzes = await leerQuizzes();
-  res.json(quizzes);
+// Lista de quizzes (filtro opcional por categoría)
+r.get('/', (req, res) => {
+  const { category } = req.query;
+  const items = category ? quizzes.filter(q => q.category === String(category)) : quizzes;
+  res.json({ ok: true, items });
 });
 
-// POST nuevo quiz
-router.post('/', async (req, res) => {
-  const quizzes = await leerQuizzes();
-  quizzes.push(req.body);
-  await guardarQuizzes(quizzes);
-  res.status(201).json({ message: 'Quiz agregado con éxito' });
+// Detalle de un quiz por id
+r.get('/:id', (req, res) => {
+  const item = quizzes.find(q => q.id === req.params.id);
+  if (!item) return res.status(404).json({ ok: false, error: 'Quiz no encontrado' });
+  res.json({ ok: true, item });
 });
 
-export default router;
+export default r;
