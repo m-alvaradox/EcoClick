@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../ui/widgets.dart';
 import '../../api.dart';
+import 'package:frontend/ui/error_widget.dart';
 
 class UserStatsPage extends StatefulWidget {
   const UserStatsPage({super.key, required this.userId});
@@ -48,9 +49,10 @@ class _UserStatsPageState extends State<UserStatsPage> {
 
           // --- ERROR ---
           if (snap.hasError) {
-            return _StateMessage(
+            return ErrorRetryWidget(
               icon: Icons.error_outline,
-              message: 'No se pudieron cargar las estadísticas.\n${snap.error}',
+              message:
+                  'No se pudo conectar con el servidor.\nRevisa tu conexión e intenta nuevamente.',
               onRetry: _reload,
             );
           }
@@ -64,8 +66,8 @@ class _UserStatsPageState extends State<UserStatsPage> {
           final avgScore = (summary['avgScore'] ?? 0) as num;
 
           // --- EMPTY ---
-          final isEmpty = (totalSessions == 0 && totalAnswers == 0) &&
-              (categories.isEmpty);
+          final isEmpty =
+              (totalSessions == 0 && totalAnswers == 0) && (categories.isEmpty);
           if (isEmpty) {
             return _StateMessage(
               icon: Icons.inbox_outlined,
@@ -80,28 +82,33 @@ class _UserStatsPageState extends State<UserStatsPage> {
             child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
-              _SummaryCards(
-                totalSessions: totalSessions,
-                totalAnswers: totalAnswers,
-                avgScore: avgScore,
-              ),
-              const SizedBox(height: 16),
+                _SummaryCards(
+                  totalSessions: totalSessions,
+                  totalAnswers: totalAnswers,
+                  avgScore: avgScore,
+                ),
+                const SizedBox(height: 16),
 
-              Text('Gráfico (promedio % por categoría)',
-                  style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 8),
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: CategoryBarChart(
-                    categories: categories.cast<Map<String, dynamic>>(),
-                    height: 260, // puedes ajustar
+                Text(
+                  'Gráfico (promedio % por categoría)',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 8),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: CategoryBarChart(
+                      categories: categories.cast<Map<String, dynamic>>(),
+                      height: 260, // puedes ajustar
+                    ),
                   ),
                 ),
-              ),
 
-const SizedBox(height: 16),
-Text('Por categoría', style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(height: 16),
+                Text(
+                  'Por categoría',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
                 const SizedBox(height: 8),
                 if (categories.isEmpty)
                   const Text('Sin datos por categoría.')
@@ -121,9 +128,13 @@ Text('Por categoría', style: Theme.of(context).textTheme.titleMedium),
                         trailing: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text('${catAvg.toStringAsFixed(1)}',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 16)),
+                            Text(
+                              '${catAvg.toStringAsFixed(1)}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
                             const Text('promedio'),
                           ],
                         ),
@@ -161,9 +172,21 @@ class _SummaryCards extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final items = [
-      (_StatTileData('Sesiones', totalSessions.toString(), Icons.event_available)),
-      (_StatTileData('Respuestas', totalAnswers.toString(), Icons.fact_check_outlined)),
-      (_StatTileData('Promedio', '${avgScore.toStringAsFixed(1)}', Icons.bar_chart)),
+      (_StatTileData(
+        'Sesiones',
+        totalSessions.toString(),
+        Icons.event_available,
+      )),
+      (_StatTileData(
+        'Respuestas',
+        totalAnswers.toString(),
+        Icons.fact_check_outlined,
+      )),
+      (_StatTileData(
+        'Promedio',
+        '${avgScore.toStringAsFixed(1)}',
+        Icons.bar_chart,
+      )),
     ];
 
     return LayoutBuilder(
@@ -185,14 +208,16 @@ class _SummaryCards extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(it.title,
-                                style: Theme.of(context).textTheme.labelMedium),
+                            Text(
+                              it.title,
+                              style: Theme.of(context).textTheme.labelMedium,
+                            ),
                             const SizedBox(height: 4),
-                            Text(it.value,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge
-                                    ?.copyWith(fontWeight: FontWeight.bold)),
+                            Text(
+                              it.value,
+                              style: Theme.of(context).textTheme.titleLarge
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
                           ],
                         ),
                       ),
@@ -244,7 +269,7 @@ class _StateMessage extends StatelessWidget {
                 icon: const Icon(Icons.refresh),
                 label: const Text('Reintentar'),
               ),
-            ]
+            ],
           ],
         ),
       ),

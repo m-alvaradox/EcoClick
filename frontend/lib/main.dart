@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'api.dart';
 import 'ui/theme.dart';
 import 'screens/stats/stats_page.dart';
-
+import 'ui/error_widget.dart';
 
 void main() {
   runApp(const EcoClickApp());
@@ -18,6 +18,7 @@ class EcoClickApp extends StatelessWidget {
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       themeMode: ThemeMode.system,
+      debugShowCheckedModeBanner: false,
       home: const QuizListPage(),
     );
   }
@@ -43,40 +44,41 @@ class _QuizListPageState extends State<QuizListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-    appBar: AppBar(
-      title: const Text('Quizzes EcoClick'),
-      actions: [
-        IconButton(
-          tooltip: 'Estadísticas',
-          icon: const Icon(Icons.insights),
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => const UserStatsPage(userId: 1), 
-              ),
-            );
-          },
-        ),
-      ],
-    ),
+      appBar: AppBar(
+        title: const Text('Quizzes EcoClick'),
+        actions: [
+          IconButton(
+            tooltip: 'Estadísticas',
+            icon: const Icon(Icons.insights),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const UserStatsPage(userId: 1),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
 
-    body: FutureBuilder<List<dynamic>>(
+      body: FutureBuilder<List<dynamic>>(
         future: future,
         builder: (context, snap) {
           if (snap.connectionState != ConnectionState.done) {
             return const Center(child: CircularProgressIndicator());
           }
           if (snap.hasError) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Text(
-                  'Error: ${snap.error}',
-                  textAlign: TextAlign.center,
-                ),
-              ),
+            return ErrorRetryWidget(
+              message:
+                  'No se pudo conectar con el servidor.\nRevisa tu conexión e intenta nuevamente.',
+              onRetry: () {
+                setState(() {
+                  future = EcoClickAPI.getQuizzes();
+                });
+              },
             );
           }
+
           final items = snap.data ?? [];
           if (items.isEmpty) {
             return const Center(child: Text('No hay quizzes disponibles'));
@@ -162,77 +164,90 @@ class _QuizDetailPageState extends State<QuizDetailPage> {
   }
 
   Future<void> _submit() async {
-  if (quiz == null) return;
-  setState(() {
-    submitting = true;
-    error = null;
-  });
-  timer.stop();
+    if (quiz == null) return;
+    setState(() {
+      submitting = true;
+      error = null;
+    });
+    timer.stop();
 
-  final answersList = chosen.entries
-      .map((e) => {'questionId': e.key, 'chosenIndex': e.value})
-      .toList();
+    final answersList = chosen.entries
+        .map((e) => {'questionId': e.key, 'chosenIndex': e.value})
+        .toList();
 
-  try {
-    final score = _calcScore();
-    final timeSec = (timer.elapsedMilliseconds / 1000).round();
+    try {
+      final score = _calcScore();
+      final timeSec = (timer.elapsedMilliseconds / 1000).round();
 
-    // 1) Enviar respuestas del quiz (flujo existente)
-    await EcoClickAPI.postAnswers(
-      quizId: quiz!['id'],
-      userId: 1,
-      answers: answersList,
-      score: score,
-      timeSec: timeSec,
-    );
-
-    // 2) NUEVO: guardar resultado por categoría
-    await EcoClickAPI.postCategoryResult(
-      userId: 1,
-      category: quiz!['category'] as String, // ej: 'reciclaje'
-      score: score,
-    );
-
-    // 3) SnackBar de confirmación del issue
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Resultado guardado')),
+      // 1) Enviar respuestas del quiz (flujo existente)
+      await EcoClickAPI.postAnswers(
+        quizId: quiz!['id'],
+        userId: 1,
+        answers: answersList,
+        score: score,
+        timeSec: timeSec,
       );
+
+      // 2) NUEVO: guardar resultado por categoría
+      await EcoClickAPI.postCategoryResult(
+        userId: 1,
+        category: quiz!['category'] as String, // ej: 'reciclaje'
+        score: score,
+      );
+
+      // 3) SnackBar de confirmación del issue
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Resultado guardado')));
+      }
+
+      // 4) (opcional) feedback como ya lo hacías
+      final fb = await EcoClickAPI.getFeedback(topic: quiz!['category']);
+      final msg = fb.isNotEmpty
+          ? (fb.first['message'] ?? '')
+          : '¡Gracias por participar!';
+
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text('¡Respuestas enviadas!'),
+          content: Text('Puntaje: $score%\nConsejo: $msg'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    } catch (e) {
+      setState(() => error = e.toString());
+    } finally {
+      if (mounted) setState(() => submitting = false);
     }
-
-    // 4) (opcional) feedback como ya lo hacías
-    final fb = await EcoClickAPI.getFeedback(topic: quiz!['category']);
-    final msg = fb.isNotEmpty ? (fb.first['message'] ?? '') : '¡Gracias por participar!';
-
-    if (!mounted) return;
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('¡Respuestas enviadas!'),
-        content: Text('Puntaje: $score%\nConsejo: $msg'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  } catch (e) {
-    setState(() => error = e.toString());
-  } finally {
-    if (mounted) setState(() => submitting = false);
-  }
   }
 
   @override
   Widget build(BuildContext context) {
     if (error != null) {
       return Scaffold(
-        appBar: AppBar(),
-        body: Center(child: Text('Error: $error')),
+        appBar: AppBar(title: const Text('Error')),
+        body: ErrorRetryWidget(
+          message:
+              'No se pudo conectar con el servidor.\nRevisa tu conexión e intenta nuevamente.',
+          onRetry: () {
+            setState(() {
+              error = null;
+              quiz = null;
+            });
+            _load();
+          },
+        ),
       );
     }
+
     if (quiz == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
