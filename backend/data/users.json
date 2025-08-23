@@ -2,5 +2,7 @@
   {
     "id": 1,
     "name": "Jose"
-  }
+  },
+  { "id": 2, "name": "Ana" },
+  { "id": 3, "name": "Luis" }
 ]
