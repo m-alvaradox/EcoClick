@@ -31,7 +31,7 @@ class _UserStatsPageState extends State<UserStatsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Estadísticas del usuario'),
+        title: const Text('Progreso del usuario'),
         actions: [
           IconButton(
             tooltip: 'Actualizar',
@@ -65,6 +65,14 @@ class _UserStatsPageState extends State<UserStatsPage> {
           final totalSessions = (summary['totalSessions'] ?? 0) as num;
           final totalAnswers = (summary['totalAnswers'] ?? 0) as num;
           final avgScore = (summary['avgScore'] ?? 0) as num;
+          final totalProgressPoints = (summary['totalProgressPoints'] ?? 0) as num;
+          final level              = (summary['level'] ?? 1) as num;
+          final levelProgress      = ((summary['levelProgress'] ?? 0) as num).toDouble();
+
+          final currentThreshold = (summary['currentThreshold'] ?? 0) as num;    // opcional
+          final nextThreshold    = summary['nextThreshold']; // puede ser null en nivel 10
+          
+
 
           // --- EMPTY ---
           final isEmpty =
@@ -83,12 +91,22 @@ class _UserStatsPageState extends State<UserStatsPage> {
             child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
+                
+                FutureBuilder<String>(
+                  future: getUsername(),
+                  builder: (_, s) => ProgressSummaryCard(
+                    totalPoints: totalProgressPoints.toInt(),
+                    level: level.toInt(),
+                    progress: levelProgress.clamp(0, 1),
+                    username: s.data,
+                  ),
+                ),
+
                 _SummaryCards(
                   totalSessions: totalSessions,
                   totalAnswers: totalAnswers,
                   avgScore: avgScore,
                 ),
-                const SizedBox(height: 16),
 
                 Text(
                   'Gráfico (promedio % por categoría)',
@@ -130,7 +148,7 @@ class _UserStatsPageState extends State<UserStatsPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              '${catAvg.toStringAsFixed(1)}',
+                              catAvg.toStringAsFixed(1),
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
@@ -185,7 +203,7 @@ class _SummaryCards extends StatelessWidget {
       )),
       (_StatTileData(
         'Promedio',
-        '${avgScore.toStringAsFixed(1)}',
+        avgScore.toStringAsFixed(1)     ,
         Icons.bar_chart,
       )),
     ];
@@ -195,6 +213,7 @@ class _SummaryCards extends StatelessWidget {
         return Wrap(
           spacing: 12,
           runSpacing: 12,
+          alignment: WrapAlignment.center,
           children: items.map((it) {
             return SizedBox(
               width: 220, // responsivo simple
@@ -274,6 +293,184 @@ class _StateMessage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class ProgressSummaryCard extends StatelessWidget {
+  const ProgressSummaryCard({
+    super.key,
+    required this.totalPoints,
+    required this.level,
+    required this.progress, // 0..1
+    this.username,
+  });
+
+  final int totalPoints;
+  final int level;
+  final double progress;
+  final String? username;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: theme.colorScheme.outlineVariant, width: 1),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              theme.colorScheme.primary.withOpacity(.14),
+              theme.colorScheme.tertiary.withOpacity(.10),
+            ],
+          ),
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            // Encabezado
+            Row(
+              children: [
+                const CircleAvatar(radius: 22, child: Icon(Icons.person)),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Mi Progreso',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        )),
+                      Text(
+                        username == null ? '¡Mira qué bien lo haces!' : '¡Sigue así, $username!',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurface.withOpacity(.7),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                _chip(icon: Icons.cloud_done, label: 'Conectado'),
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            // Tarjeta interna "Mis Números"
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: theme.colorScheme.outlineVariant),
+                boxShadow: [BoxShadow(
+                  color: Colors.black.withOpacity(.06),
+                  blurRadius: 8, offset: const Offset(0, 3),
+                )],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Banda superior
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
+                      gradient: LinearGradient(colors: [Colors.orange.shade400, Colors.orange.shade600]),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.emoji_events_outlined, color: Colors.white),
+                        const SizedBox(width: 8),
+                        Text('Mis Números',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: Colors.white, fontWeight: FontWeight.w800,
+                          )),
+                      ],
+                    ),
+                  ),
+
+                  // Contenido
+                  Padding(
+                    padding: const EdgeInsets.all(14),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _rowMetric(
+                          context,
+                          title: 'Puntos Totales',
+                          trailing: _chip(
+                            icon: Icons.star_rounded,
+                            label: '$totalPoints',
+                            bg: Colors.amber.shade400, fg: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        _rowMetric(
+                          context,
+                          title: 'Mi Nivel',
+                          trailing: _chip(
+                            icon: Icons.track_changes_rounded,
+                            label: 'Nivel $level',
+                            bg: const Color(0xFF9C6BFF), fg: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                        Text('Siguiente Nivel', style: theme.textTheme.bodyMedium),
+                        const SizedBox(height: 6),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(6),
+                          child: LinearProgressIndicator(
+                            value: progress.clamp(0, 1), minHeight: 10,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text('${(progress * 100).toStringAsFixed(0)}% • ¡Ya casi llegas!',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurface.withOpacity(.7),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static Widget _rowMetric(BuildContext context, {required String title, required Widget trailing}) {
+    final theme = Theme.of(context);
+    return Row(
+      children: [
+        Expanded(child: Text(title, style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600))),
+        trailing,
+      ],
+    );
+  }
+
+  static Widget _chip({required IconData icon, required String label, Color? bg, Color? fg}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: bg ?? const Color(0xFFEDEEF2),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: Colors.black.withOpacity(.06)),
+      ),
+      child: Row(mainAxisSize: MainAxisSize.min, children: [
+        Icon(icon, size: 16, color: fg ?? Colors.black87),
+        const SizedBox(width: 6),
+        Text(label, style: TextStyle(color: fg ?? Colors.black87, fontWeight: FontWeight.w800)),
+      ]),
     );
   }
 }
