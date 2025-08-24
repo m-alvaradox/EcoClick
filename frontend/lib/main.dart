@@ -83,14 +83,32 @@ class _QuizListPageState extends State<QuizListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // Agregar logo de EcoClick
-        leading: Padding(
-          padding: const EdgeInsets.all(4.0), // Menos padding para más espacio
-          child: SizedBox(
-            width: 48, // Ajusta el tamaño deseado
-            height: 48,
-            child: Image.asset('assets/logo.png'),
-          ),
+        title: Row(
+          children: [
+            SizedBox(
+              width: 40,
+              height: 40,
+              child: Image.asset('assets/logo.png'),
+            ),
+            const SizedBox(width: 8),
+            FutureBuilder<String>(
+              future: SharedPreferences.getInstance().then(
+                (prefs) => prefs.getString('username') ?? 'Eco-Héroe',
+              ),
+              builder: (context, snapshot) {
+                final name = snapshot.data ?? '';
+                return Text(
+                  '¡Hola, $name!',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                );
+              },
+            ),
+          ],
         ),
 
         actions: [
