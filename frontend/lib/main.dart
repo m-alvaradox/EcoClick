@@ -19,8 +19,6 @@ class EcoClickApp extends StatelessWidget {
     return MaterialApp(
       title: 'EcoClick',
       theme: AppTheme.light(),
-      darkTheme: AppTheme.dark(),
-      themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
       home: const InitialScreen(),
     );
@@ -132,102 +130,93 @@ class _QuizListPageState extends State<QuizListPage> {
             return const Center(child: Text('No hay quizzes disponibles'));
           }
 
-          return ListView.builder(
+          return GridView.builder(
             padding: const EdgeInsets.all(12),
-            itemCount: items.length + 1,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3, // ← Ahora son 3 columnas por fila
+              childAspectRatio: 0.8, // ← Puedes ajustar este valor para el alto
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+            ),
+            itemCount: items.length,
             itemBuilder: (context, index) {
-              if (index == 0) {
-                // Encabezado con saludo al usuario
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: FutureBuilder<String>(
-                    future: getUsername(),
-                    builder: (context, s) {
-                      final name = s.data ?? 'Eco-Héroe';
-                      return Text(
-                        '¡Hola, $name!',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      );
-                    },
-                  ),
-                );
-              }
-              final q = items[index - 1] as Map<String, dynamic>;
+              final q = items[index] as Map<String, dynamic>;
               final imagePath = q['image'] ?? 'assets/quizzes/default.jpg';
               final title = q['title'] ?? 'Quiz';
               final category = q['category'] ?? 'Sin categoría';
               final description =
                   q['description'] ?? '¡Diviértete aprendiendo!';
 
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: Card(
-                  color: Colors.lightGreen[50],
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(18),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) =>
-                              QuizDetailPage(quizId: q['id'] as String),
+              return Card(
+                color: Colors.lightGreen[50],
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(18),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            QuizDetailPage(quizId: q['id'] as String),
+                      ),
+                    );
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(18),
+                          topRight: Radius.circular(18),
                         ),
-                      );
-                    },
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(18),
-                            topRight: Radius.circular(18),
-                          ),
+                        child: AspectRatio(
+                          aspectRatio: 1.2, // Imagen más cuadrada y visible
                           child: Image.asset(
                             imagePath,
-                            width: double.infinity,
-                            height: 140,
                             fit: BoxFit.cover,
+                            width: double.infinity,
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                category.toUpperCase(),
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: Colors.green,
-                                  letterSpacing: 1,
-                                ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(8, 6, 8, 6),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              category.toUpperCase(),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                color: Colors.green,
+                                letterSpacing: 1,
                               ),
-                              Text(
-                                title,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                  color: Colors.black87,
-                                ),
+                            ),
+                            Text(
+                              title,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                                color: Colors.black87,
                               ),
-                              const SizedBox(height: 8),
-                              Text(
-                                description,
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.black54,
-                                ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              description,
+                              style: const TextStyle(
+                                fontSize: 11,
+                                color: Colors.black54,
                               ),
-                            ],
-                          ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               );

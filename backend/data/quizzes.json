@@ -71,7 +71,7 @@
     "id": "quiz-eco-3",
     "category": "agua",
     "title": "Cuidado del agua",
-    "image": "assets/quizzes/water.avif",
+    "image": "assets/quizzes/water.jpg",
     "description": "Aprende cómo conservar y cuidar el agua en tu vida diaria.",
     "questions": [
       {
@@ -110,7 +110,7 @@
     "id": "quiz-eco-4",
     "category": "energia",
     "title": "Eficiencia energética",
-    "image": "assets/quizzes/energy.avif",
+    "image": "assets/quizzes/energy.jpg",
     "description": "Conoce las mejores prácticas para ahorrar energía en casa.",
     "questions": [
       {
@@ -149,7 +149,7 @@
     "id": "quiz-eco-5",
     "category": "biodiversidad",
     "title": "Biodiversidad urbana",
-    "image": "assets/quizzes/biodiversity.avif",
+    "image": "assets/quizzes/biodiversity.jpg",
     "description": "Descubre cómo proteger y fomentar la biodiversidad en entornos urbanos.",
     "questions": [
       {

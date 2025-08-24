@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   static ThemeData light() {
@@ -48,6 +49,7 @@ class AppTheme {
       snackBarTheme: const SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
       ),
+      textTheme: GoogleFonts.nunitoTextTheme(), // ← fuente global para niños
     );
   }
 
@@ -62,6 +64,7 @@ class AppTheme {
       snackBarTheme: const SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
       ),
+      textTheme: GoogleFonts.nunitoTextTheme(), // ← también en modo oscuro
     );
   }
 }
