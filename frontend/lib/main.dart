@@ -69,7 +69,16 @@ class _QuizListPageState extends State<QuizListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Quizzes EcoClick'),
+        // Agregar logo de EcoClick
+        leading: Padding(
+          padding: const EdgeInsets.all(4.0), // Menos padding para más espacio
+          child: SizedBox(
+            width: 48, // Ajusta el tamaño deseado
+            height: 48,
+            child: Image.asset('assets/logo.png'),
+          ),
+        ),
+
         actions: [
           IconButton(
             tooltip: 'Estadísticas',
@@ -123,54 +132,106 @@ class _QuizListPageState extends State<QuizListPage> {
             return const Center(child: Text('No hay quizzes disponibles'));
           }
 
-          // Construimos la lista con un encabezado (saludo) + las cards
-          return ListView(
+          return ListView.builder(
             padding: const EdgeInsets.all(12),
-            children: [
-              // 👇 Encabezado con saludo al usuario
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: FutureBuilder<String>(
-                  future: getUsername(),
-                  builder: (context, s) {
-                    final name = s.data ?? 'Eco-Héroe';
-                    return Text(
-                      '¡Hola, $name!',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    );
-                  },
-                ),
-              ),
+            itemCount: items.length + 1,
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                // Encabezado con saludo al usuario
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: FutureBuilder<String>(
+                    future: getUsername(),
+                    builder: (context, s) {
+                      final name = s.data ?? 'Eco-Héroe';
+                      return Text(
+                        '¡Hola, $name!',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      );
+                    },
+                  ),
+                );
+              }
+              final q = items[index - 1] as Map<String, dynamic>;
+              final imagePath = q['image'] ?? 'assets/quizzes/default.jpg';
+              final title = q['title'] ?? 'Quiz';
+              final category = q['category'] ?? 'Sin categoría';
+              final description =
+                  q['description'] ?? '¡Diviértete aprendiendo!';
 
-              // 👇 Lista de quizzes (con separadores manuales)
-              for (int i = 0; i < items.length; i++) ...[
-                Builder(
-                  builder: (_) {
-                    final q = items[i] as Map<String, dynamic>;
-                    final questions = (q['questions'] as List?)?.length ?? 0;
-                    return Card(
-                      child: ListTile(
-                        title: Text(q['title'] ?? 'Quiz'),
-                        subtitle: Text(
-                          'Categoría: ${q['category']} • Preguntas: $questions',
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Card(
+                  color: Colors.lightGreen[50],
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(18),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              QuizDetailPage(quizId: q['id'] as String),
                         ),
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  QuizDetailPage(quizId: q['id'] as String),
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  },
+                      );
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(18),
+                            topRight: Radius.circular(18),
+                          ),
+                          child: Image.asset(
+                            imagePath,
+                            width: double.infinity,
+                            height: 140,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                category.toUpperCase(),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: Colors.green,
+                                  letterSpacing: 1,
+                                ),
+                              ),
+                              Text(
+                                title,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                description,
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                if (i != items.length - 1) const SizedBox(height: 8),
-              ],
-            ],
+              );
+            },
           );
         },
       ),

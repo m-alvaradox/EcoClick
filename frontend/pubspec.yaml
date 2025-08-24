@@ -54,6 +54,15 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  assets:
+    - assets/quizzes/reciclaje.jpg
+    - assets/quizzes/advanced.jpg
+    - assets/quizzes/water.avif
+    - assets/quizzes/energy.avif
+    - assets/quizzes/biodiversity.avif
+    - assets/quizzes/bici.jpg
+    - assets/quizzes/default.jpg
+    - assets/logo.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
