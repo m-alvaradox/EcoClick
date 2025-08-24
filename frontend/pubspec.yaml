@@ -40,6 +40,7 @@ dependencies:
   fl_chart: 0.66.0
   video_player: ^2.10.0
   animate_do: ^4.2.0
+  audioplayers: ^6.5.0
 
 dev_dependencies:
   flutter_test:
@@ -61,6 +62,8 @@ flutter:
     - assets/quizzes/
     - assets/logo.png
     - assets/videos/fondo.mp4
+    - assets/music/kids_bg.wav
+    
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

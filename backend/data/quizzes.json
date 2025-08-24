@@ -2,7 +2,7 @@
   {
     "id": "quiz-eco-1",
     "category": "reciclaje",
-    "title": "Quiz de Reciclaje básico",
+    "title": "Reciclaje básico",
     "image": "assets/quizzes/reciclaje.jpg",
     "description": "Pon a prueba tus conocimientos sobre reciclaje con este quiz básico.",
     "questions": [
@@ -25,18 +25,9 @@
           "Metales"
         ],
         "answerIndex": 0
-      }
-    ]
-  },
-  {
-    "id": "quiz-eco-2",
-    "category": "reciclaje",
-    "title": "Reciclaje avanzado",
-    "image": "assets/quizzes/advanced.jpg",
-    "description": "Desafía tus conocimientos con preguntas más avanzadas sobre reciclaje.",
-    "questions": [
+      },
       {
-        "id": 201,
+        "id": 103,
         "text": "¿Dónde va una lata de aluminio?",
         "options": [
           "Plástico",
@@ -46,7 +37,7 @@
         "answerIndex": 1
       },
       {
-        "id": 202,
+        "id": 104,
         "text": "El símbolo de Möbius (tres flechas) indica…",
         "options": [
           "Reciclable",
@@ -56,7 +47,7 @@
         "answerIndex": 0
       },
       {
-        "id": 203,
+        "id": 105,
         "text": "Con las tapas plásticas de botellas es mejor…",
         "options": [
           "Separarlas y limpiar",
