@@ -80,6 +80,21 @@
       "userId": 1,
       "category": "reciclaje",
       "score": 100
+    },
+    {
+      "userId": 1,
+      "category": "reciclaje",
+      "score": 50
+    },
+    {
+      "userId": 1,
+      "category": "reciclaje",
+      "score": 50
+    },
+    {
+      "userId": 1,
+      "category": "agua",
+      "score": 33
     }
   ]
 }

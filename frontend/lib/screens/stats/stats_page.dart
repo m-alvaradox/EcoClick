@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../ui/widgets.dart';
 import '../../api.dart';
 import 'package:frontend/ui/error_widget.dart';
+import 'package:frontend/utils/prefers.dart';
 
 class UserStatsPage extends StatefulWidget {
   const UserStatsPage({super.key, required this.userId});

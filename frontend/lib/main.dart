@@ -3,6 +3,9 @@ import 'api.dart';
 import 'ui/theme.dart';
 import 'screens/stats/stats_page.dart';
 import 'ui/error_widget.dart';
+import 'screens/login_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:frontend/utils/prefers.dart';
 
 void main() {
   runApp(const EcoClickApp());
@@ -19,7 +22,28 @@ class EcoClickApp extends StatelessWidget {
       darkTheme: AppTheme.dark(),
       themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
-      home: const QuizListPage(),
+      home: const InitialScreen(),
+    );
+  }
+}
+
+class InitialScreen extends StatelessWidget {
+  const InitialScreen({super.key});
+
+  Future<bool> _hasName() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.containsKey('username');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<bool>(
+      future: _hasName(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) return const CircularProgressIndicator();
+
+        return snapshot.data == true ? const QuizListPage() : const LoginPage();
+      },
     );
   }
 }
@@ -58,6 +82,21 @@ class _QuizListPageState extends State<QuizListPage> {
               );
             },
           ),
+          IconButton(
+            tooltip: 'Cambiar usuario',
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              final prefs = await SharedPreferences.getInstance();
+              await prefs.remove('username');
+              if (context.mounted) {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (_) => const LoginPage()),
+                  (route) => false,
+                );
+              }
+            },
+          ),
         ],
       ),
 
@@ -83,32 +122,55 @@ class _QuizListPageState extends State<QuizListPage> {
           if (items.isEmpty) {
             return const Center(child: Text('No hay quizzes disponibles'));
           }
-          return ListView.separated(
+
+          // Construimos la lista con un encabezado (saludo) + las cards
+          return ListView(
             padding: const EdgeInsets.all(12),
-            itemCount: items.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 8),
-            itemBuilder: (context, i) {
-              final q = items[i] as Map<String, dynamic>;
-              final questions = (q['questions'] as List?)?.length ?? 0;
-              return Card(
-                child: ListTile(
-                  title: Text(q['title'] ?? 'Quiz'),
-                  subtitle: Text(
-                    'Categoría: ${q['category']} • Preguntas: $questions',
-                  ),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            QuizDetailPage(quizId: q['id'] as String),
+            children: [
+              // 👇 Encabezado con saludo al usuario
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: FutureBuilder<String>(
+                  future: getUsername(),
+                  builder: (context, s) {
+                    final name = s.data ?? 'Eco-Héroe';
+                    return Text(
+                      '¡Hola, $name!',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    );
+                  },
+                ),
+              ),
+
+              // 👇 Lista de quizzes (con separadores manuales)
+              for (int i = 0; i < items.length; i++) ...[
+                Builder(
+                  builder: (_) {
+                    final q = items[i] as Map<String, dynamic>;
+                    final questions = (q['questions'] as List?)?.length ?? 0;
+                    return Card(
+                      child: ListTile(
+                        title: Text(q['title'] ?? 'Quiz'),
+                        subtitle: Text(
+                          'Categoría: ${q['category']} • Preguntas: $questions',
+                        ),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  QuizDetailPage(quizId: q['id'] as String),
+                            ),
+                          );
+                        },
                       ),
                     );
                   },
                 ),
-              );
-            },
+                if (i != items.length - 1) const SizedBox(height: 8),
+              ],
+            ],
           );
         },
       ),
