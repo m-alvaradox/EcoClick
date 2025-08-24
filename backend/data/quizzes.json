@@ -3,6 +3,8 @@
     "id": "quiz-eco-1",
     "category": "reciclaje",
     "title": "Quiz de Reciclaje básico",
+    "image": "assets/quizzes/reciclaje.jpg",
+    "description": "Pon a prueba tus conocimientos sobre reciclaje con este quiz básico.",
     "questions": [
       {
         "id": 101,
@@ -30,6 +32,8 @@
     "id": "quiz-eco-2",
     "category": "reciclaje",
     "title": "Reciclaje avanzado",
+    "image": "assets/quizzes/advanced.jpg",
+    "description": "Desafía tus conocimientos con preguntas más avanzadas sobre reciclaje.",
     "questions": [
       {
         "id": 201,
@@ -67,6 +71,8 @@
     "id": "quiz-eco-3",
     "category": "agua",
     "title": "Cuidado del agua",
+    "image": "assets/quizzes/water.jpg",
+    "description": "Aprende cómo conservar y cuidar el agua en tu vida diaria.",
     "questions": [
       {
         "id": 301,
@@ -104,6 +110,8 @@
     "id": "quiz-eco-4",
     "category": "energia",
     "title": "Eficiencia energética",
+    "image": "assets/quizzes/energy.jpg",
+    "description": "Conoce las mejores prácticas para ahorrar energía en casa.",
     "questions": [
       {
         "id": 401,
@@ -141,6 +149,8 @@
     "id": "quiz-eco-5",
     "category": "biodiversidad",
     "title": "Biodiversidad urbana",
+    "image": "assets/quizzes/biodiversity.jpg",
+    "description": "Descubre cómo proteger y fomentar la biodiversidad en entornos urbanos.",
     "questions": [
       {
         "id": 501,
@@ -178,6 +188,8 @@
     "id": "quiz-eco-6",
     "category": "movilidad",
     "title": "Movilidad sostenible",
+    "image": "assets/quizzes/bici.jpg",
+    "description": "Aprende sobre opciones de transporte que reducen el impacto ambiental.",
     "questions": [
       {
         "id": 601,

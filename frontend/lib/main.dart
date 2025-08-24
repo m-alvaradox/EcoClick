@@ -1,4 +1,6 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
 import 'api.dart';
 import 'ui/theme.dart';
 import 'screens/stats/stats_page.dart';
@@ -19,8 +21,6 @@ class EcoClickApp extends StatelessWidget {
     return MaterialApp(
       title: 'EcoClick',
       theme: AppTheme.light(),
-      darkTheme: AppTheme.dark(),
-      themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
       home: const InitialScreen(),
     );
@@ -58,18 +58,59 @@ class QuizListPage extends StatefulWidget {
 
 class _QuizListPageState extends State<QuizListPage> {
   late Future<List<dynamic>> future;
+  late VideoPlayerController _controller;
 
   @override
   void initState() {
     super.initState();
     future = EcoClickAPI.getQuizzes();
+    _controller = VideoPlayerController.asset('assets/videos/fondo.mp4')
+      ..setLooping(true)
+      ..setVolume(0)
+      ..initialize().then((_) {
+        setState(() {});
+        _controller.play();
+      });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Quizzes EcoClick'),
+        title: Row(
+          children: [
+            SizedBox(
+              width: 40,
+              height: 40,
+              child: Image.asset('assets/logo.png'),
+            ),
+            const SizedBox(width: 8),
+            FutureBuilder<String>(
+              future: SharedPreferences.getInstance().then(
+                (prefs) => prefs.getString('username') ?? 'Eco-Héroe',
+              ),
+              builder: (context, snapshot) {
+                final name = snapshot.data ?? '';
+                return Text(
+                  '¡Hola, $name!',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                );
+              },
+            ),
+          ],
+        ),
+
         actions: [
           IconButton(
             tooltip: 'Estadísticas',
@@ -100,61 +141,72 @@ class _QuizListPageState extends State<QuizListPage> {
         ],
       ),
 
-      body: FutureBuilder<List<dynamic>>(
-        future: future,
-        builder: (context, snap) {
-          if (snap.connectionState != ConnectionState.done) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snap.hasError) {
-            return ErrorRetryWidget(
-              message:
-                  'No se pudo conectar con el servidor.\nRevisa tu conexión e intenta nuevamente.',
-              onRetry: () {
-                setState(() {
-                  future = EcoClickAPI.getQuizzes();
-                });
-              },
-            );
-          }
-
-          final items = snap.data ?? [];
-          if (items.isEmpty) {
-            return const Center(child: Text('No hay quizzes disponibles'));
-          }
-
-          // Construimos la lista con un encabezado (saludo) + las cards
-          return ListView(
-            padding: const EdgeInsets.all(12),
-            children: [
-              // 👇 Encabezado con saludo al usuario
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: FutureBuilder<String>(
-                  future: getUsername(),
-                  builder: (context, s) {
-                    final name = s.data ?? 'Eco-Héroe';
-                    return Text(
-                      '¡Hola, $name!',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    );
-                  },
+      body: Stack(
+        children: [
+          if (_controller.value.isInitialized)
+            SizedBox.expand(
+              child: FittedBox(
+                fit: BoxFit.cover,
+                child: SizedBox(
+                  width: _controller.value.size.width,
+                  height: _controller.value.size.height,
+                  child: VideoPlayer(_controller),
                 ),
               ),
+            ),
+          FutureBuilder<List<dynamic>>(
+            future: future,
+            builder: (context, snap) {
+              if (snap.connectionState != ConnectionState.done) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (snap.hasError) {
+                return ErrorRetryWidget(
+                  message:
+                      'No se pudo conectar con el servidor.\nRevisa tu conexión e intenta nuevamente.',
+                  onRetry: () {
+                    setState(() {
+                      future = EcoClickAPI.getQuizzes();
+                    });
+                  },
+                );
+              }
 
-              // 👇 Lista de quizzes (con separadores manuales)
-              for (int i = 0; i < items.length; i++) ...[
-                Builder(
-                  builder: (_) {
-                    final q = items[i] as Map<String, dynamic>;
-                    final questions = (q['questions'] as List?)?.length ?? 0;
-                    return Card(
-                      child: ListTile(
-                        title: Text(q['title'] ?? 'Quiz'),
-                        subtitle: Text(
-                          'Categoría: ${q['category']} • Preguntas: $questions',
-                        ),
-                        trailing: const Icon(Icons.chevron_right),
+              final items = snap.data ?? [];
+              if (items.isEmpty) {
+                return const Center(child: Text('No hay quizzes disponibles'));
+              }
+
+              return GridView.builder(
+                padding: const EdgeInsets.all(12),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3, // ← Ahora son 3 columnas por fila
+                  childAspectRatio:
+                      0.8, // ← Puedes ajustar este valor para el alto
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                ),
+                itemCount: items.length,
+                itemBuilder: (context, index) {
+                  final q = items[index] as Map<String, dynamic>;
+                  final imagePath = q['image'] ?? 'assets/quizzes/default.jpg';
+                  final title = q['title'] ?? 'Quiz';
+                  final category = q['category'] ?? 'Sin categoría';
+                  final description =
+                      q['description'] ?? '¡Diviértete aprendiendo!';
+
+                  return ZoomIn(
+                    duration: Duration(
+                      milliseconds: 400 + index * 100,
+                    ), // efecto escalonado
+                    child: Card(
+                      color: Colors.lightGreen[50],
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(18),
                         onTap: () {
                           Navigator.push(
                             context,
@@ -164,15 +216,69 @@ class _QuizListPageState extends State<QuizListPage> {
                             ),
                           );
                         },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ClipRRect(
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(18),
+                                topRight: Radius.circular(18),
+                              ),
+                              child: AspectRatio(
+                                aspectRatio:
+                                    1.2, // Imagen más cuadrada y visible
+                                child: Image.asset(
+                                  imagePath,
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(8, 6, 8, 6),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    category.toUpperCase(),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                      color: Colors.green,
+                                      letterSpacing: 1,
+                                    ),
+                                  ),
+                                  Text(
+                                    title,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    description,
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      color: Colors.black54,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    );
-                  },
-                ),
-                if (i != items.length - 1) const SizedBox(height: 8),
-              ],
-            ],
-          );
-        },
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        ],
       ),
     );
   }

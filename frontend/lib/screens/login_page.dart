@@ -34,9 +34,10 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
-                '¡Bienvenido a EcoClick!',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              Image.asset(
+                'assets/logo.png',
+                width: 200, // ajusta tamaño
+                height: 200,
               ),
               const SizedBox(height: 30),
               TextField(
