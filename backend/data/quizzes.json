@@ -14,7 +14,8 @@
           "Vidrio",
           "Plástico"
         ],
-        "answerIndex": 2
+        "answerIndex": 2,
+        "refImage": "assets/quizzes/sub/plastico.jpg"
       },
       {
         "id": 102,
@@ -24,7 +25,8 @@
           "Orgánico",
           "Metales"
         ],
-        "answerIndex": 0
+        "answerIndex": 0,
+        "refImage": "assets/quizzes/sub/vaso_carton.jpg"
       },
       {
         "id": 103,
@@ -34,7 +36,8 @@
           "Metales",
           "Orgánico"
         ],
-        "answerIndex": 1
+        "answerIndex": 1,
+        "refImage": "assets/quizzes/sub/lata.jpg"
       },
       {
         "id": 104,
@@ -44,7 +47,8 @@
           "Biodegradable",
           "Compostable"
         ],
-        "answerIndex": 0
+        "answerIndex": 0,
+        "refImage": "assets/quizzes/sub/mobious.jpg"
       },
       {
         "id": 105,
@@ -54,7 +58,8 @@
           "Mantenerlas unidas",
           "Tirar al orgánico"
         ],
-        "answerIndex": 0
+        "answerIndex": 0,
+        "refImage": "assets/quizzes/sub/tapas.jpg"
       }
     ]
   },
@@ -83,7 +88,8 @@
           "Aumenta el consumo",
           "No cambia nada"
         ],
-        "answerIndex": 0
+        "answerIndex": 0,
+        "refImage": "assets/quizzes/sub/aireador.jpg"
       },
       {
         "id": 303,
@@ -93,7 +99,8 @@
           "Al amanecer/atardecer",
           "De noche con aspersores potentes"
         ],
-        "answerIndex": 1
+        "answerIndex": 1,
+        "refImage": "assets/quizzes/sub/riego.jpg"
       }
     ]
   },
@@ -112,7 +119,8 @@
           "Fluorescente",
           "LED"
         ],
-        "answerIndex": 2
+        "answerIndex": 2,
+        "refImage": "assets/quizzes/sub/foco.jpg"
       },
       {
         "id": 402,
@@ -122,7 +130,8 @@
           "Consume un poco",
           "Consume igual que encendido"
         ],
-        "answerIndex": 1
+        "answerIndex": 1,
+        "refImage": "assets/quizzes/sub/standby.jpg"
       },
       {
         "id": 403,
@@ -132,7 +141,8 @@
           "22–24°C",
           "27°C"
         ],
-        "answerIndex": 1
+        "answerIndex": 1,
+        "refImage": "assets/quizzes/sub/aireac.jpg"
       }
     ]
   },
@@ -151,7 +161,8 @@
           "Ayudan a la biodiversidad",
           "Se adaptan sin problema"
         ],
-        "answerIndex": 0
+        "answerIndex": 0,
+        "refImage": "assets/quizzes/sub/exotica.jpg"
       },
       {
         "id": 502,
@@ -161,7 +172,8 @@
           "Gatos y perros",
           "Serpientes y ranas"
         ],
-        "answerIndex": 0
+        "answerIndex": 0,
+        "refImage": "assets/quizzes/sub/polinizador.jpg"
       },
       {
         "id": 503,
@@ -171,7 +183,8 @@
           "No aporta",
           "Siempre consume más agua"
         ],
-        "answerIndex": 0
+        "answerIndex": 0,
+        "refImage": "assets/quizzes/sub/nativa.jpg"
       }
     ]
   },
@@ -190,7 +203,8 @@
           "Transporte público",
           "Moto"
         ],
-        "answerIndex": 1
+        "answerIndex": 1,
+        "refImage": "assets/quizzes/sub/huella.jpg"
       },
       {
         "id": 602,
@@ -200,7 +214,8 @@
           "Taxi",
           "Patinete a gasolina"
         ],
-        "answerIndex": 0
+        "answerIndex": 0,
+        "refImage": "assets/quizzes/sub/trayecto.jpg"
       },
       {
         "id": 603,
@@ -210,7 +225,8 @@
           "Tiempo de viaje siempre",
           "Uso de transporte público"
         ],
-        "answerIndex": 0
+        "answerIndex": 0,
+        "refImage": "assets/quizzes/sub/carpooling.jpg"
       }
     ]
   },
@@ -218,6 +234,8 @@
     "id": "quiz-eco-7",
     "category": "residuos",
     "title": "Gestión de residuos",
+    "image": "assets/quizzes/residuos.jpg",
+    "description": "Conoce las mejores prácticas para reducir y gestionar tus residuos.",
     "questions": [
       {
         "id": 701,
@@ -227,7 +245,8 @@
           "Plástico",
           "Vidrio"
         ],
-        "answerIndex": 0
+        "answerIndex": 0,
+        "refImage": "assets/quizzes/sub/organico.jpg"
       },
       {
         "id": 702,
@@ -237,7 +256,8 @@
           "Basura normal",
           "Enterrarlos"
         ],
-        "answerIndex": 0
+        "answerIndex": 0,
+        "refImage": "assets/quizzes/sub/raee.jpg"
       },
       {
         "id": 703,
@@ -247,7 +267,50 @@
           "Calidad",
           "Precio siempre"
         ],
-        "answerIndex": 0
+        "answerIndex": 0,
+        "refImage": "assets/quizzes/sub/granel.jpg"
+      }
+    ]
+  },
+  {
+    "id": "quiz-eco-8",
+    "category": "consumo",
+    "title": "Consumo responsable",
+    "image": "assets/quizzes/consumo.jpg",
+    "description": "Conoce cómo tomar decisiones de compra que beneficien al planeta.",
+    "questions": [
+      {
+        "id": 801,
+        "text": "¿Qué es consumo responsable?",
+        "options": [
+          "Comprar solo lo necesario",
+          "Comprar lo más barato",
+          "Comprar en grandes cantidades"
+        ],
+        "answerIndex": 0,
+        "refImage": "assets/quizzes/sub/responsable.jpg"
+      },
+      {
+        "id": 802,
+        "text": "Productos con certificación ecológica:",
+        "options": [
+          "Garantizan menor impacto ambiental",
+          "Son siempre más caros",
+          "No tienen diferencia"
+        ],
+        "answerIndex": 0,
+        "refImage": "assets/quizzes/sub/certificacion.jpg"
+      },
+      {
+        "id": 803,
+        "text": "Reducir el desperdicio de alimentos se logra con:",
+        "options": [
+          "Planificar compras y menús",
+          "Comprar más para tener variedad",
+          "Tirar lo que sobra"
+        ],
+        "answerIndex": 0,
+        "refImage": "assets/quizzes/sub/desperdicio.jpg"
       }
     ]
   }

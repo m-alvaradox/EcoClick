@@ -60,6 +60,7 @@ dev_dependencies:
 flutter:
   assets:
     - assets/quizzes/
+    - assets/quizzes/sub/
     - assets/logo.png
     - assets/videos/fondo.mp4
     - assets/music/kids_bg.wav

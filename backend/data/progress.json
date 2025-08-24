@@ -10,6 +10,41 @@
       "userId": 1,
       "category": "reciclaje",
       "score": 80
+    },
+    {
+      "userId": 1,
+      "category": "reciclaje",
+      "score": 80
+    },
+    {
+      "userId": 1,
+      "category": "reciclaje",
+      "score": 80
+    },
+    {
+      "userId": 1,
+      "category": "reciclaje",
+      "score": 80
+    },
+    {
+      "userId": 1,
+      "category": "movilidad",
+      "score": 100
+    },
+    {
+      "userId": 1,
+      "category": "reciclaje",
+      "score": 100
+    },
+    {
+      "userId": 1,
+      "category": "agua",
+      "score": 67
+    },
+    {
+      "userId": 1,
+      "category": "reciclaje",
+      "score": 0
     }
   ]
 }
