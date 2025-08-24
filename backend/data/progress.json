@@ -95,6 +95,41 @@
       "userId": 1,
       "category": "agua",
       "score": 33
+    },
+    {
+      "userId": 1,
+      "category": "reciclaje",
+      "score": 100
+    },
+    {
+      "userId": 1,
+      "category": "reciclaje",
+      "score": 100
+    },
+    {
+      "userId": 1,
+      "category": "reciclaje",
+      "score": 100
+    },
+    {
+      "userId": 1,
+      "category": "reciclaje",
+      "score": 100
+    },
+    {
+      "userId": 1,
+      "category": "reciclaje",
+      "score": 100
+    },
+    {
+      "userId": 1,
+      "category": "reciclaje",
+      "score": 100
+    },
+    {
+      "userId": 1,
+      "category": "reciclaje",
+      "score": 100
     }
   ]
 }

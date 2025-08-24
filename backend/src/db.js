@@ -96,6 +96,38 @@ export function addCategoryResult({ userId, category, score }) {
   return item;
 }
 
+// --- CONFIG DE NIVELES ---
+// L1=0, L2=500, L3=1500, y luego +1000 por nivel hasta L10
+const LEVEL_THRESHOLDS = [0, 500, 1500, 2500, 3500, 4500, 5500, 6500, 7500, 8500]; // 10 niveles.
+
+function getTotalProgressPoints(results) {
+  return results
+    .filter(r => Number(r.score) === 100)   // solo intentos con score == 100
+    .reduce((acc, r) => acc + Number(r.score), 0); 
+}
+
+// Calcula nivel y progreso dentro del nivel con base en los thresholds
+function computeLevel(points) {
+  const maxIdx = LEVEL_THRESHOLDS.length - 1; // idx 0..9 (niveles 1..10)
+  // Encuentra el mayor threshold <= points
+  let idx = 0;
+  for (let i = maxIdx; i >= 0; i--) {
+    if (points >= LEVEL_THRESHOLDS[i]) { idx = i; break; }
+  }
+
+  const level = idx + 1; // 1..10
+  const currentThreshold = LEVEL_THRESHOLDS[idx];
+  const nextThreshold = idx < maxIdx ? LEVEL_THRESHOLDS[idx + 1] : null;
+
+  // Progreso 0..1 entre current y next; si estás en el último nivel, 1
+  const progress = nextThreshold
+    ? Math.max(0, Math.min(1, (points - currentThreshold) / (nextThreshold - currentThreshold)))
+    : 1;
+
+  return { level, currentThreshold, nextThreshold, progress };
+}
+
+
 export function getResponsesStats(userId) {
   const db = _readSafeProgress();
 
@@ -126,6 +158,7 @@ export function getResponsesStats(userId) {
     e.sum += Number(r.score || 0);
     e.attempts += 1;
   }
+  
 
   const categories = Array.from(map.entries()).map(([category, e]) => ({
     category,
@@ -133,5 +166,9 @@ export function getResponsesStats(userId) {
     attempts: e.attempts,
   }));
 
-  return { summary: { totalSessions, totalAnswers, avgScore }, categories };
+  const totalProgressPoints = getTotalProgressPoints(results); 
+  const { level, currentThreshold, nextThreshold, progress } = computeLevel(totalProgressPoints);
+
+  return { summary: { totalSessions, totalAnswers, avgScore, totalProgressPoints, level,
+    levelProgress: Number(progress.toFixed(2)), currentThreshold, nextThreshold }, categories };
 }
