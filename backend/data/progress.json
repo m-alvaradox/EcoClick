@@ -45,6 +45,31 @@
       "userId": 1,
       "category": "reciclaje",
       "score": 0
+    },
+    {
+      "userId": 1,
+      "category": "reciclaje",
+      "score": 20
+    },
+    {
+      "userId": 1,
+      "category": "energia",
+      "score": 33
+    },
+    {
+      "userId": 1,
+      "category": "movilidad",
+      "score": 0
+    },
+    {
+      "userId": 1,
+      "category": "agua",
+      "score": 33
+    },
+    {
+      "userId": 1,
+      "category": "energia",
+      "score": 33
     }
   ]
 }

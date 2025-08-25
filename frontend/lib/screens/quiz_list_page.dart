@@ -71,7 +71,7 @@ class _QuizListPageState extends State<QuizListPage> {
         ),
         actions: [
           IconButton(
-            tooltip: 'Estadísticas',
+            tooltip: 'Mi Progreso',
             icon: const Icon(Icons.insights),
             onPressed: () {
               Navigator.of(context).push(

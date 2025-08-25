@@ -1,4 +1,8 @@
   [ 
   { "topic": "reciclaje", "message": "Separa plástico, papel/cartón, vidrio y orgánicos para mejorar la tasa de recuperación." },
-  { "topic": "agua",       "message": "Cierra el grifo al cepillarte y repara fugas para ahorrar litros por día." }
+  { "topic": "agua",       "message": "Cierra el grifo al cepillarte y repara fugas para ahorrar litros por día." },
+  { "topic": "energia",    "message": "Apaga luces y desconecta aparatos cuando no los uses para reducir el consumo energético." },
+  { "topic": "transporte", "message": "Usa transporte público, bicicleta o camina para disminuir la huella de carbono." },
+  { "topic": "consumo",    "message": "Compra productos locales y de temporada para apoyar la economía y reducir emisiones." },
+  { "topic": "residuos",   "message": "Evita productos de un solo uso y opta por reutilizables para minimizar residuos." }
 ]
