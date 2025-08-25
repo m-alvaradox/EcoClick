@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:video_player/video_player.dart';
 import '../api.dart';
 import '../ui/error_widget.dart';
@@ -22,9 +21,7 @@ class _QuizDetailPageState extends State<QuizDetailPage> {
   String? error;
   int secondsLeft = 15;
   late List<Map<String, dynamic>> questions;
-  late AudioPlayer _audioPlayer;
   late Stopwatch timer;
-  late String musicPath;
   Timer? _timer;
   late VideoPlayerController _videoController;
 
@@ -32,9 +29,6 @@ class _QuizDetailPageState extends State<QuizDetailPage> {
   void initState() {
     super.initState();
     _load();
-    _audioPlayer = AudioPlayer();
-    musicPath = 'assets/music/kids_bg.wav';
-    //_playMusic();
     _videoController = VideoPlayerController.asset('assets/videos/fondo.mp4')
       ..setLooping(true)
       ..setVolume(0)
@@ -44,14 +38,8 @@ class _QuizDetailPageState extends State<QuizDetailPage> {
       });
   }
 
-  Future<void> _playMusic() async {
-    await _audioPlayer.setReleaseMode(ReleaseMode.loop);
-    await _audioPlayer.play(AssetSource(musicPath));
-  }
-
   @override
   void dispose() {
-    _audioPlayer.stop();
     _timer?.cancel();
     _videoController.dispose();
     super.dispose();

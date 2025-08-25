@@ -19,5 +19,10 @@
     "userName": "Ana",
     "comment": "La interfaz está muy clara y fácil de usar.",
     "createdAt": "2025-08-24T23:10:00.000Z"
+  },
+  {
+    "userId": 1,
+    "userName": "Usuario01",
+    "comment": "Mirate"
   }
 ]

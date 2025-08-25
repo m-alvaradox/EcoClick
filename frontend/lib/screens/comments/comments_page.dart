@@ -6,7 +6,8 @@ class CommentsPage extends StatefulWidget {
   final int userId;
   final String userName;
 
-  const CommentsPage({Key? key, required this.userId, required this.userName}) : super(key: key);
+  const CommentsPage({Key? key, required this.userId, required this.userName})
+    : super(key: key);
 
   @override
   State<CommentsPage> createState() => _CommentsPageState();
@@ -24,7 +25,9 @@ class _CommentsPageState extends State<CommentsPage> {
 
   // Traer comentarios
   Future<List<dynamic>> fetchComments() async {
-    final response = await http.get(Uri.parse('http://localhost:4000/comments'));
+    final response = await http.get(
+      Uri.parse('http://localhost:4000/comments'),
+    );
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
@@ -39,12 +42,12 @@ class _CommentsPageState extends State<CommentsPage> {
       headers: {'Content-Type': 'application/json'},
       body: json.encode({
         'userId': widget.userId,
+        'userName': widget.userName, // <-- Agrega el nombre aquí
         'comment': commentText,
       }),
     );
 
     if (response.statusCode == 201) {
-      // Refrescar lista
       setState(() {
         commentsFuture = fetchComments();
         _controller.clear();
@@ -84,7 +87,10 @@ class _CommentsPageState extends State<CommentsPage> {
                   itemBuilder: (context, index) {
                     final comment = comments[index];
                     return Card(
-                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       child: ListTile(
                         leading: const Icon(Icons.comment, color: Colors.green),
                         title: Text(comment['comment']),
@@ -117,7 +123,9 @@ class _CommentsPageState extends State<CommentsPage> {
                     final text = _controller.text.trim();
                     if (text.isNotEmpty) addComment(text);
                   },
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                  ),
                   child: const Text('Enviar'),
                 ),
               ],
@@ -128,4 +136,3 @@ class _CommentsPageState extends State<CommentsPage> {
     );
   }
 }
-

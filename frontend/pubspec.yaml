@@ -63,7 +63,6 @@ flutter:
     - assets/quizzes/sub/
     - assets/logo.png
     - assets/videos/fondo.mp4
-    - assets/music/kids_bg.wav
     
 
   # The following line ensures that the Material Icons font is
