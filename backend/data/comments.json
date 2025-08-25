@@ -1,2 +1,22 @@
 [
+  {
+    "userId": 1,
+    "userName": "Mario",
+    "comment": "Me encanta esta app, es muy educativa."
+  },
+  {
+    "userId": 1,
+    "userName": "Medardo",
+    "comment": "Sería genial agregar más quizzes sobre reciclaje."
+  },
+  {
+    "userId": 1,
+    "userName": "Ana",
+    "comment": "La interfaz está muy clara y fácil de usar."
+  },
+  {
+    "userId": 1,
+    "userName": "Andrés",
+    "comment": "Mario, Medardo y yo somos unos cracks, 100 en LP :D"
+  }
 ]

@@ -22,6 +22,12 @@ class _CommentsPageState extends State<CommentsPage> {
     commentsFuture = fetchComments();
   }
 
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   // Traer comentarios
   Future<List<dynamic>> fetchComments() async {
     final response = await http.get(
@@ -77,7 +83,16 @@ class _CommentsPageState extends State<CommentsPage> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
+                  // Implementación del ErrorRetryWidget
+                  return ErrorRetryWidget(
+                    message:
+                        'Error al cargar los comentarios. Intenta nuevamente.',
+                    onRetry: () {
+                      setState(() {
+                        commentsFuture = fetchComments();
+                      });
+                    },
+                  );
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return const Center(child: Text('No hay comentarios'));
                 }
@@ -113,7 +128,7 @@ class _CommentsPageState extends State<CommentsPage> {
                   child: TextField(
                     controller: _controller,
                     decoration: const InputDecoration(
-                      hintText: 'Escribe un comentario...',
+                      hintText: 'Escribe un comentario.',
                       border: OutlineInputBorder(),
                     ),
                   ),
