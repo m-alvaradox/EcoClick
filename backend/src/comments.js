@@ -23,32 +23,23 @@ router.get('/', (req, res) => {
 
 // Agregar un comentario
 router.post('/', (req, res) => {
-  const { userId, comment } = req.body;
-  if (!userId || !comment) {
-    return res.status(400).json({ error: 'Faltan userId o comentario' });
+  const { userId, userName, comment } = req.body;
+  if (!userId || !userName || !comment) {
+    return res.status(400).json({ error: 'Faltan userId, userName o comentario' });
   }
 
-  // Leer usuarios para obtener el nombre
-  fs.readFile(USERS_PATH, 'utf8', (err, usersData) => {
-    if (err) return res.status(500).json({ error: 'No se pudo leer usuarios' });
-    const users = JSON.parse(usersData);
-    const user = users.find(u => u.id === userId);
-    if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
-
-    // Leer comentarios y agregar el nuevo
-    fs.readFile(COMMENTS_PATH, 'utf8', (err, commentsData) => {
-      if (err) return res.status(500).json({ error: 'No se pudo leer comentarios' });
-      const comments = JSON.parse(commentsData);
-      const newComment = {
-        userId,
-        userName: user.name,
-        comment
-      };
-      comments.push(newComment);
-      fs.writeFile(COMMENTS_PATH, JSON.stringify(comments, null, 2), err => {
-        if (err) return res.status(500).json({ error: 'No se pudo guardar comentario' });
-        res.status(201).json({ ok: true, comment: newComment });
-      });
+  fs.readFile(COMMENTS_PATH, 'utf8', (err, commentsData) => {
+    if (err) return res.status(500).json({ error: 'No se pudo leer comentarios' });
+    const comments = commentsData ? JSON.parse(commentsData) : [];
+    const newComment = {
+      userId,
+      userName,
+      comment
+    };
+    comments.push(newComment);
+    fs.writeFile(COMMENTS_PATH, JSON.stringify(comments, null, 2), err => {
+      if (err) return res.status(500).json({ error: 'No se pudo guardar comentario' });
+      res.status(201).json(newComment);
     });
   });
 });

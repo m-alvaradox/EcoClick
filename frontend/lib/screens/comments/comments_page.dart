@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:frontend/ui/error_widget.dart';
+import 'package:frontend/utils/prefers.dart';
 
 class CommentsPage extends StatefulWidget {
+  const CommentsPage({super.key, required this.userId});
   final int userId;
-  final String userName;
-
-  const CommentsPage({Key? key, required this.userId, required this.userName})
-    : super(key: key);
 
   @override
   State<CommentsPage> createState() => _CommentsPageState();
@@ -37,12 +36,14 @@ class _CommentsPageState extends State<CommentsPage> {
 
   // Agregar un comentario
   Future<void> addComment(String commentText) async {
+    final userName = await getUsername(); // Espera el nombre
+
     final response = await http.post(
       Uri.parse('http://localhost:4000/comments'),
       headers: {'Content-Type': 'application/json'},
       body: json.encode({
         'userId': widget.userId,
-        'userName': widget.userName, // <-- Agrega el nombre aquí
+        'userName': userName, // Usa el nombre obtenido
         'comment': commentText,
       }),
     );

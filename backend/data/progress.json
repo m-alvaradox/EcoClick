@@ -70,6 +70,11 @@
       "userId": 1,
       "category": "energia",
       "score": 33
+    },
+    {
+      "userId": 1,
+      "category": "reciclaje",
+      "score": 20
     }
   ]
 }

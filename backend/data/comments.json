@@ -1,28 +1,2 @@
 [
-  {
-    "id": 1,
-    "userId": 1,
-    "userName": "Ana",
-    "comment": "Me encanta esta app, es muy educativa.",
-    "createdAt": "2025-08-24T23:00:00.000Z"
-  },
-  {
-    "id": 2,
-    "userId": 2,
-    "userName": "Carlos",
-    "comment": "Sería genial agregar más quizzes sobre reciclaje.",
-    "createdAt": "2025-08-24T23:05:00.000Z"
-  },
-  {
-    "id": 3,
-    "userId": 1,
-    "userName": "Ana",
-    "comment": "La interfaz está muy clara y fácil de usar.",
-    "createdAt": "2025-08-24T23:10:00.000Z"
-  },
-  {
-    "userId": 1,
-    "userName": "Usuario01",
-    "comment": "Mirate"
-  }
 ]

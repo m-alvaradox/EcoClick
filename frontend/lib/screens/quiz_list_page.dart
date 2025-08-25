@@ -75,16 +75,8 @@ class _QuizListPageState extends State<QuizListPage> {
             tooltip: 'Comentarios',
             icon: const Icon(Icons.comment),
             onPressed: () async {
-              final prefs = await SharedPreferences.getInstance();
-              final username = prefs.getString('username') ?? 'Eco-Héroe';
-              final userId =
-                  prefs.getInt('userId') ?? 1; // ID temporal si no hay login
-
               Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) =>
-                      CommentsPage(userId: userId, userName: username),
-                ),
+                MaterialPageRoute(builder: (_) => CommentsPage(userId: 1)),
               );
             },
           ),
