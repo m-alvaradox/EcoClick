@@ -10,6 +10,7 @@ import usersRoutes from './users.js';
 import achievementsRoutes from './achievements.js';
 import progressRoutes from './progress.js';
 import resultsRouter from './results.js'; 
+import commentsRouter from './comments.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,7 +28,8 @@ app.use('/api/progress', progressRoutes);
 
 app.use(express.static(path.join(__dirname, '../public')));
 
-app.use('/quizzes', quizzesRouter); // /quizzes y /quizzes/:id
+app.use('/quizzes', quizzesRouter);
+app.use('/comments', commentsRouter); // /quizzes y /quizzes/:id
 app.use('/', gameplayRouter);       // /games/:gameId/answers y /feedback
 
 
