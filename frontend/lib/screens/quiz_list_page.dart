@@ -7,6 +7,7 @@ import '../ui/error_widget.dart';
 import 'quiz_detail_page.dart';
 import 'stats/stats_page.dart';
 import 'login_page.dart';
+import 'package:frontend/screens/comments/comments_page.dart';
 
 class QuizListPage extends StatefulWidget {
   const QuizListPage({super.key});
@@ -70,6 +71,25 @@ class _QuizListPageState extends State<QuizListPage> {
           ],
         ),
         actions: [
+          IconButton(
+  tooltip: 'Comentarios',
+  icon: const Icon(Icons.comment),
+  onPressed: () async {
+    final prefs = await SharedPreferences.getInstance();
+    final username = prefs.getString('username') ?? 'Eco-Héroe';
+    final userId = prefs.getInt('userId') ?? 1; // ID temporal si no hay login
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => CommentsPage(
+          userId: userId,
+          userName: username,
+        ),
+      ),
+    );
+  },
+),
+
           IconButton(
             tooltip: 'Estadísticas',
             icon: const Icon(Icons.insights),

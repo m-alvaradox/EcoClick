@@ -39,6 +39,8 @@ class _LoginPageState extends State<LoginPage> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('username', name);
 
+    await prefs.setInt('userId', 1);
+
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => const QuizListPage()),
