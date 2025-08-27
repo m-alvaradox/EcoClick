@@ -1,4 +1,4 @@
-# 🌍 EcoClick  
+# EcoClick  
 
 EcoClick es una aplicación educativa gamificada orientada a niños de educación básica.  
 Su objetivo es enseñar sobre **reciclaje, biodiversidad y cuidado del entorno** a través de mini-juegos interactivos, con sistema de puntajes, logros y retroalimentación visual.  
@@ -9,7 +9,7 @@ El proyecto está desarrollado con:
 
 ---
 
-## 🚀 Demo  
+## Demo  
 
 El proyecto incluye una **demo funcional** con una pantalla principal, mini-juegos y sistema de puntajes.  
 
