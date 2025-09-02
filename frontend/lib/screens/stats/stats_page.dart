@@ -104,7 +104,6 @@ class _UserStatsPageState extends State<UserStatsPage> {
 
                 _SummaryCards(
                   totalSessions: totalSessions,
-                  totalAnswers: totalAnswers,
                   avgScore: avgScore,
                 ),
 
@@ -180,12 +179,10 @@ class _UserStatsPageState extends State<UserStatsPage> {
 class _SummaryCards extends StatelessWidget {
   const _SummaryCards({
     required this.totalSessions,
-    required this.totalAnswers,
     required this.avgScore,
   });
 
   final num totalSessions;
-  final num totalAnswers;
   final num avgScore;
 
   @override
@@ -195,11 +192,6 @@ class _SummaryCards extends StatelessWidget {
         'Sesiones',
         totalSessions.toString(),
         Icons.event_available,
-      )),
-      (_StatTileData(
-        'Respuestas',
-        totalAnswers.toString(),
-        Icons.fact_check_outlined,
       )),
       (_StatTileData(
         'Promedio',

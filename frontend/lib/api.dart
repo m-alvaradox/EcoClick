@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class EcoClickAPI {
-  // Si en Windows te falla "localhost", usa 127.0.0.1
   static const String baseUrl = 'http://127.0.0.1:4000';
 
   static Future<List<dynamic>> getQuizzes() async {
