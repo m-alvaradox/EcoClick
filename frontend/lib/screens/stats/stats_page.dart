@@ -69,8 +69,7 @@ class _UserStatsPageState extends State<UserStatsPage> {
           final level              = (summary['level'] ?? 1) as num;
           final levelProgress      = ((summary['levelProgress'] ?? 0) as num).toDouble();
 
-          final currentThreshold = (summary['currentThreshold'] ?? 0) as num;    // opcional
-          final nextThreshold    = summary['nextThreshold']; // puede ser null en nivel 10
+
           
 
 
